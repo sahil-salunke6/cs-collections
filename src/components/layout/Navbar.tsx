@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import type { CmsAnnouncement } from "@/lib/cms";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Search, Heart, ShoppingBag } from "lucide-react";
@@ -22,20 +23,29 @@ const MEGA: Record<string, "national" | "club"> = {
   "/club-teams": "club",
 };
 
-export function Navbar() {
+export function Navbar({ announcement }: { announcement?: CmsAnnouncement }) {
   const dispatch = useAppDispatch();
   const pathname = usePathname();
   const [searchOpen, setSearchOpen] = useState(false);
   const cartCount = useAppSelector(selectCartCount);
   const wishCount = useAppSelector(selectWishlistCount);
 
+  const showBar = announcement ? announcement.enabled : true;
+  const barText = announcement?.text ?? "100% Authentic Football Jerseys · Shipping across India · Pay via UPI, Cards & Net Banking";
+
   return (
     <>
-      <div className="bg-primary text-primary-foreground">
-        <Container className="flex h-9 items-center justify-center gap-2 text-center text-[12.5px] font-medium">
-          <span>100% Authentic Football Jerseys · Shipping across India · Pay via UPI, Cards &amp; Net Banking</span>
-        </Container>
-      </div>
+      {showBar && (
+        <div className="bg-primary text-primary-foreground">
+          <Container className="flex h-9 items-center justify-center gap-2 text-center text-[12.5px] font-medium">
+            {announcement?.link ? (
+              <a href={announcement.link} className="hover:underline">{barText}</a>
+            ) : (
+              <span>{barText}</span>
+            )}
+          </Container>
+        </div>
+      )}
 
       <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur-xl theme-transition">
         <Container className="flex h-16 items-center gap-3 lg:h-[68px]">

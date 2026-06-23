@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { Store, LogOut } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { Store, LogOut, LayoutDashboard, FileText, Package } from "lucide-react";
+import { cn } from "@/lib/utils/cn";
 import { Logo } from "@/components/common/Logo";
 import { ThemeToggle } from "@/components/common/ThemeToggle";
 import { Button } from "@/components/ui/button";
@@ -11,9 +12,16 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { logout } from "@/store/slices/authSlice";
 import { selectIsAdmin } from "@/store/selectors";
 
+const NAV = [
+  { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/admin/content", label: "Content", icon: FileText },
+  { href: "/admin/products", label: "Products", icon: Package },
+];
+
 export function AdminShell({ children }: { children: React.ReactNode }) {
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const pathname = usePathname();
   const isAdmin = useAppSelector(selectIsAdmin);
 
   return (
@@ -45,7 +53,55 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           </div>
         </div>
       </header>
-      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6">{children}</main>
+
+      <div className="mx-auto flex max-w-7xl gap-0 px-4 sm:px-6">
+        <nav className="hidden w-52 shrink-0 py-8 pr-6 md:block">
+          <ul className="space-y-1">
+            {NAV.map(({ href, label, icon: Icon }) => {
+              const active = href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);
+              return (
+                <li key={href}>
+                  <Link
+                    href={href}
+                    className={cn(
+                      "flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-medium transition-colors",
+                      active
+                        ? "bg-primary/10 text-primary"
+                        : "text-muted-foreground hover:bg-secondary hover:text-foreground",
+                    )}
+                  >
+                    <Icon className="size-4 shrink-0" />
+                    {label}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
+
+        {/* Mobile top nav */}
+        <div className="flex w-full gap-1 overflow-x-auto py-4 md:hidden">
+          {NAV.map(({ href, label, icon: Icon }) => {
+            const active = href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);
+            return (
+              <Link
+                key={href}
+                href={href}
+                className={cn(
+                  "flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors",
+                  active
+                    ? "bg-primary/10 text-primary"
+                    : "text-muted-foreground hover:bg-secondary hover:text-foreground",
+                )}
+              >
+                <Icon className="size-3.5" /> {label}
+              </Link>
+            );
+          })}
+        </div>
+
+        <main className="min-w-0 flex-1 py-8">{children}</main>
+      </div>
     </div>
   );
 }

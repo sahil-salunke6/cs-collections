@@ -8,8 +8,8 @@
    CS COLLECTIONS — Design Tokens
    Semantic variables. Components never hardcode hex; they read these tokens,
    and the .dark block remaps the same names. Brand palette:
-     Bottle Green  #0F5132   |   Vibrant Pink #FF2D75
-     Ink           #1A1A1A   |   Border       #E5E7EB
+     Vivid Orange  #FF6200   |   Navy Blue   #0F2167
+     Ink           #1A1A1A   |   Border      #E4E4E4
      Amber (logo)  #E08A1E
 ---------------------------------------------------------------------------- */
 :root {
@@ -22,16 +22,16 @@
   --popover: #ffffff;
   --popover-foreground: #1a1a1a;
 
-  --primary: #0f5132;
+  --primary: #ff6200;
   --primary-foreground: #ffffff;
 
-  --secondary: #f4f6f5;
+  --secondary: #f6f6f6;
   --secondary-foreground: #1a1a1a;
 
-  --muted: #f4f6f5;
+  --muted: #f6f6f6;
   --muted-foreground: #6b7280;
 
-  --accent: #ff2d75;
+  --accent: #0f2167;
   --accent-foreground: #ffffff;
 
   --destructive: #dc2626;
@@ -40,14 +40,14 @@
   --success: #16a34a;
   --warning: #d97706;
 
-  --border: #e5e7eb;
-  --input: #e5e7eb;
-  --ring: #0f5132;
+  --border: #e4e4e4;
+  --input: #e4e4e4;
+  --ring: #ff6200;
 
   /* Brand-specific (used for gradients, retro accents, the logo amber) */
-  --brand-green: #0f5132;
-  --brand-green-deep: #0a3d26;
-  --brand-pink: #ff2d75;
+  --brand-orange: #ff6200;
+  --brand-orange-deep: #cc4e00;
+  --brand-lead: #0f2167;
   --brand-amber: #e08a1e;
   --brand-amber-from: #e8a33d;
   --brand-amber-to: #6b3410;
@@ -56,25 +56,25 @@
 }
 
 .dark {
-  --background: #0b0f0d;
-  --foreground: #f4f5f4;
+  --background: #111111;
+  --foreground: #f2f2f2;
 
-  --card: #121815;
-  --card-foreground: #f4f5f4;
+  --card: #1b1b1b;
+  --card-foreground: #f2f2f2;
 
-  --popover: #121815;
-  --popover-foreground: #f4f5f4;
+  --popover: #1b1b1b;
+  --popover-foreground: #f2f2f2;
 
-  --primary: #22a05f;
-  --primary-foreground: #04130b;
+  --primary: #ff7b1a;
+  --primary-foreground: #ffffff;
 
-  --secondary: #1a211d;
-  --secondary-foreground: #f4f5f4;
+  --secondary: #242424;
+  --secondary-foreground: #f2f2f2;
 
-  --muted: #1a211d;
-  --muted-foreground: #9aa39d;
+  --muted: #242424;
+  --muted-foreground: #8a8a8a;
 
-  --accent: #ff2d75;
+  --accent: #6b8fe8;
   --accent-foreground: #ffffff;
 
   --destructive: #ef4444;
@@ -83,12 +83,13 @@
   --success: #22c55e;
   --warning: #f59e0b;
 
-  --border: #242c27;
-  --input: #242c27;
-  --ring: #22a05f;
+  --border: #2e2e2e;
+  --input: #2e2e2e;
+  --ring: #ff7b1a;
 
-  --brand-green: #22a05f;
-  --brand-green-deep: #0a3d26;
+  --brand-orange: #ff7b1a;
+  --brand-orange-deep: #cc4e00;
+  --brand-lead: #6b8fe8;
 }
 
 /* Map tokens to Tailwind utilities (bg-background, text-foreground, ...) */
@@ -115,9 +116,9 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  --color-brand-green: var(--brand-green);
-  --color-brand-green-deep: var(--brand-green-deep);
-  --color-brand-pink: var(--brand-pink);
+  --color-brand-orange: var(--brand-orange);
+  --color-brand-orange-deep: var(--brand-orange-deep);
+  --color-brand-lead: var(--brand-lead);
   --color-brand-amber: var(--brand-amber);
 
   --radius-sm: calc(var(--radius) - 4px);
@@ -187,7 +188,7 @@
   }
 
   ::selection {
-    background-color: var(--brand-pink);
+    background-color: var(--brand-orange);
     color: #fff;
   }
 }
@@ -214,8 +215,8 @@
   .brand-gradient {
     background-image: linear-gradient(
       135deg,
-      var(--brand-green) 0%,
-      var(--brand-green-deep) 100%
+      var(--brand-orange) 0%,
+      var(--brand-lead) 100%
     );
   }
 }
