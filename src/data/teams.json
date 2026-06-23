@@ -1,0 +1,17 @@
+[
+  { "id": "br", "slug": "brazil", "name": "Brazil", "type": "national", "crest": "", "country": "Brazil", "confederation": "CONMEBOL", "primaryColor": "#009C3B", "productCount": 6, "featured": true },
+  { "id": "ar", "slug": "argentina", "name": "Argentina", "type": "national", "crest": "", "country": "Argentina", "confederation": "CONMEBOL", "primaryColor": "#6CACE4", "productCount": 5, "featured": true },
+  { "id": "fr", "slug": "france", "name": "France", "type": "national", "crest": "", "country": "France", "confederation": "UEFA", "primaryColor": "#1E3A8A", "productCount": 5, "featured": true },
+  { "id": "en", "slug": "england", "name": "England", "type": "national", "crest": "", "country": "England", "confederation": "UEFA", "primaryColor": "#CE1124", "productCount": 4, "featured": true },
+  { "id": "pt", "slug": "portugal", "name": "Portugal", "type": "national", "crest": "", "country": "Portugal", "confederation": "UEFA", "primaryColor": "#C8102E", "productCount": 4, "featured": false },
+  { "id": "es", "slug": "spain", "name": "Spain", "type": "national", "crest": "", "country": "Spain", "confederation": "UEFA", "primaryColor": "#C60B1E", "productCount": 4, "featured": false },
+  { "id": "de", "slug": "germany", "name": "Germany", "type": "national", "crest": "", "country": "Germany", "confederation": "UEFA", "primaryColor": "#1A1A1A", "productCount": 4, "featured": false },
+  { "id": "rma", "slug": "real-madrid", "name": "Real Madrid", "type": "club", "crest": "", "country": "Spain", "league": "LaLiga", "confederation": "UEFA", "primaryColor": "#FEBE10", "productCount": 6, "featured": true },
+  { "id": "fcb", "slug": "barcelona", "name": "FC Barcelona", "type": "club", "crest": "", "country": "Spain", "league": "LaLiga", "confederation": "UEFA", "primaryColor": "#A50044", "productCount": 6, "featured": true },
+  { "id": "mci", "slug": "manchester-city", "name": "Manchester City", "type": "club", "crest": "", "country": "England", "league": "Premier League", "confederation": "UEFA", "primaryColor": "#6CABDD", "productCount": 5, "featured": true },
+  { "id": "lfc", "slug": "liverpool", "name": "Liverpool", "type": "club", "crest": "", "country": "England", "league": "Premier League", "confederation": "UEFA", "primaryColor": "#C8102E", "productCount": 5, "featured": true },
+  { "id": "fcb-de", "slug": "bayern-munich", "name": "Bayern Munich", "type": "club", "crest": "", "country": "Germany", "league": "Bundesliga", "confederation": "UEFA", "primaryColor": "#DC052D", "productCount": 4, "featured": false },
+  { "id": "psg", "slug": "paris-saint-germain", "name": "Paris Saint-Germain", "type": "club", "crest": "", "country": "France", "league": "Ligue 1", "confederation": "UEFA", "primaryColor": "#004170", "productCount": 5, "featured": true },
+  { "id": "int", "slug": "inter-milan", "name": "Inter Milan", "type": "club", "crest": "", "country": "Italy", "league": "Serie A", "confederation": "UEFA", "primaryColor": "#0068A8", "productCount": 4, "featured": false },
+  { "id": "juv", "slug": "juventus", "name": "Juventus", "type": "club", "crest": "", "country": "Italy", "league": "Serie A", "confederation": "UEFA", "primaryColor": "#1A1A1A", "productCount": 4, "featured": false }
+]
