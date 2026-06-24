@@ -9,13 +9,14 @@ interface Props {
   number?: number;
   className?: string;
   priority?: boolean;
+  transparent?: boolean; // skip the background rect — jersey floats on parent bg
 }
 
 /**
  * Brand-consistent generated jersey artwork (no external image assets).
  * Renders front / back / detail views from a team's colour palette.
  */
-export function JerseyVisual({ colors, view = "front", name = "CS", number = 10, className }: Props) {
+export function JerseyVisual({ colors, view = "front", name = "CS", number = 10, className, transparent = false }: Props) {
   const [shirt, secondary = "#ffffff", accent = "#111111"] = colors;
   const gid = `${shirt}${secondary}${view}`.replace(/[^a-z0-9]/gi, "");
 
@@ -33,7 +34,7 @@ export function JerseyVisual({ colors, view = "front", name = "CS", number = 10,
           </linearGradient>
         </defs>
 
-        <rect width="400" height="400" fill={`url(#bg${gid})`} />
+        {!transparent && <rect width="400" height="400" fill={`url(#bg${gid})`} />}
 
         {view === "detail" ? (
           <DetailWeave shirt={shirt} secondary={secondary} accent={accent} />
