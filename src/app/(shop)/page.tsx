@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import * as api from "@/lib/api";
+import { getCmsData } from "@/lib/cms";
 import { Section } from "@/components/common/Section";
 import { Container } from "@/components/common/Container";
 import { SectionHeader } from "@/components/common/SectionHeader";
@@ -14,6 +15,7 @@ import { ProductRailSection } from "@/components/product/ProductRailSection";
 import { Newsletter } from "@/components/common/Newsletter";
 
 export default async function HomePage() {
+  const cms = getCmsData();
   const [nationalTeams, clubTeams, newArrivals, trending, limited, retro, collections, instagram] =
     await Promise.all([
       api.getFeaturedTeams("national"),
@@ -28,7 +30,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <Hero />
+      <Hero heroContent={cms.hero} heroTiles={cms.heroTiles} />
 
       <Section>
         <SectionHeader
@@ -65,17 +67,18 @@ export default async function HomePage() {
 
       {/* Limited edition banner */}
       <Section>
-        <div className="relative overflow-hidden rounded-3xl brand-gradient px-6 py-12 text-white sm:px-12 sm:py-16">
+        <div
+          className="relative overflow-hidden rounded-3xl brand-gradient px-6 py-12 text-white sm:px-12 sm:py-16"
+          style={{ "--foreground": "#ffffff", "--muted-foreground": "rgba(255,255,255,0.72)", "--border": "rgba(255,255,255,0.14)" } as React.CSSProperties}
+        >
           <div className="pointer-events-none absolute -right-20 -top-20 size-80 rounded-full bg-accent/30 blur-3xl" />
           <div className="relative max-w-xl">
-            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-white/70">Limited Edition</span>
-            <h2 className="mt-3 font-display text-3xl font-bold sm:text-4xl">Rare kits. Limited runs. Gone fast.</h2>
-            <p className="mt-3 text-white/80">
-              Special-edition and limited drops you won't find anywhere else. Secure yours before they sell out.
-            </p>
+            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-white/70">{cms.limitedBanner.eyebrow}</span>
+            <h2 className="mt-3 font-display text-3xl font-bold sm:text-4xl">{cms.limitedBanner.headline}</h2>
+            <p className="mt-3 text-white/80">{cms.limitedBanner.subtext}</p>
             <Button asChild size="lg" variant="accent" className="mt-6">
-              <Link href="/products?badge=limited">
-                Shop Limited Edition <ArrowRight className="size-4" />
+              <Link href={cms.limitedBanner.ctaHref}>
+                {cms.limitedBanner.ctaText} <ArrowRight className="size-4" />
               </Link>
             </Button>
           </div>

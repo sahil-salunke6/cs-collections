@@ -6,13 +6,50 @@ import { ArrowRight, Sparkles } from "lucide-react";
 import { Container } from "@/components/common/Container";
 import { Button } from "@/components/ui/button";
 import { JerseyVisual } from "@/components/common/JerseyVisual";
+import type { CmsHero, CmsHeroTile } from "@/lib/cms";
 
 const float = {
   animate: { y: [0, -14, 0] },
   transition: { duration: 6, repeat: Infinity, ease: "easeInOut" },
 };
 
-export function Hero() {
+const DEFAULT: CmsHero = {
+  badge: "2024/25 On-Pitch Collection",
+  line1: "Wear the Badge.",
+  line2: "Own the Moment.",
+  subtext:
+    "Authentic national & club jerseys — engineered for matchday and built to last. Premium, fast, and 100% genuine.",
+  cta1Text: "Shop New Arrivals",
+  cta1Href: "/new-arrivals",
+  cta2Text: "Explore Retro",
+  cta2Href: "/retro",
+  stats: [
+    { value: "100%", label: "Authentic" },
+    { value: "90+", label: "Countries shipped" },
+    { value: "4.9★", label: "Customer rating" },
+  ],
+};
+
+const DEFAULT_TILES: CmsHeroTile[] = [
+  { image: null, colors: ["#FCE000", "#009C3B", "#002776"], view: "front" },
+  { image: null, colors: ["#FFFFFF", "#FEBE10", "#00529F"], view: "back", name: "Madrid", number: 7 },
+  { image: null, colors: ["#A50044", "#004D98", "#FFED02"], view: "front" },
+  { image: null, colors: ["#6CABDD", "#FFFFFF", "#1C2C5B"], view: "front" },
+];
+
+function TileContent({ tile }: { tile: CmsHeroTile }) {
+  if (tile.image) {
+    return <img src={tile.image} alt="" className="h-full w-full object-cover" />;
+  }
+  return (
+    <JerseyVisual colors={tile.colors} view={tile.view} name={tile.name} number={tile.number} />
+  );
+}
+
+export function Hero({ heroContent, heroTiles }: { heroContent?: CmsHero; heroTiles?: CmsHeroTile[] }) {
+  const h: CmsHero = { ...DEFAULT, ...heroContent };
+  const tiles = heroTiles && heroTiles.length === 4 ? heroTiles : DEFAULT_TILES;
+
   return (
     <section className="relative overflow-hidden border-b border-border bg-card theme-transition">
       <div className="pointer-events-none absolute inset-0">
@@ -28,35 +65,29 @@ export function Hero() {
           className="max-w-xl"
         >
           <span className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-3 py-1 text-xs font-semibold uppercase tracking-wide text-accent">
-            <Sparkles className="size-3.5" /> 2024/25 On-Pitch Collection
+            <Sparkles className="size-3.5" /> {h.badge}
           </span>
           <h1 className="mt-5 font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-foreground sm:text-5xl lg:text-6xl text-balance">
-            Wear the Badge.
+            {h.line1}
             <br />
-            <span className="text-primary">Own the Moment.</span>
+            <span className="text-primary">{h.line2}</span>
           </h1>
-          <p className="mt-5 max-w-md text-base text-muted-foreground sm:text-lg">
-            Authentic national &amp; club jerseys — engineered for matchday and built to last. Premium, fast, and 100% genuine.
-          </p>
+          <p className="mt-5 max-w-md text-base text-muted-foreground sm:text-lg">{h.subtext}</p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Button asChild size="xl">
-              <Link href="/new-arrivals">
-                Shop New Arrivals <ArrowRight className="size-4" />
+              <Link href={h.cta1Href}>
+                {h.cta1Text} <ArrowRight className="size-4" />
               </Link>
             </Button>
             <Button asChild size="xl" variant="outline">
-              <Link href="/retro">Explore Retro</Link>
+              <Link href={h.cta2Href}>{h.cta2Text}</Link>
             </Button>
           </div>
           <div className="mt-10 flex gap-8">
-            {[
-              { k: "100%", v: "Authentic" },
-              { k: "90+", v: "Countries shipped" },
-              { k: "4.9★", v: "Customer rating" },
-            ].map((s) => (
-              <div key={s.v}>
-                <p className="font-display text-2xl font-bold text-foreground">{s.k}</p>
-                <p className="text-xs text-muted-foreground">{s.v}</p>
+            {h.stats.map((s) => (
+              <div key={s.label}>
+                <p className="font-display text-2xl font-bold text-foreground">{s.value}</p>
+                <p className="text-xs text-muted-foreground">{s.label}</p>
               </div>
             ))}
           </div>
@@ -64,24 +95,24 @@ export function Hero() {
 
         <div className="relative mx-auto grid w-full max-w-md grid-cols-2 gap-4">
           <motion.div {...float} className="overflow-hidden rounded-3xl border border-border bg-background shadow-xl">
-            <JerseyVisual colors={["#FCE000", "#009C3B", "#002776"]} view="front" />
+            <TileContent tile={tiles[0]} />
           </motion.div>
           <motion.div
             animate={{ y: [0, 14, 0] }}
             transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 0.6 }}
             className="mt-10 overflow-hidden rounded-3xl border border-border bg-background shadow-xl"
           >
-            <JerseyVisual colors={["#FFFFFF", "#FEBE10", "#00529F"]} view="back" name="Madrid" number={7} />
+            <TileContent tile={tiles[1]} />
           </motion.div>
           <motion.div
             animate={{ y: [0, 12, 0] }}
             transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 0.3 }}
             className="-mt-2 overflow-hidden rounded-3xl border border-border bg-background shadow-xl"
           >
-            <JerseyVisual colors={["#A50044", "#004D98", "#FFED02"]} view="front" />
+            <TileContent tile={tiles[2]} />
           </motion.div>
           <motion.div {...float} className="overflow-hidden rounded-3xl border border-border bg-background shadow-xl">
-            <JerseyVisual colors={["#6CABDD", "#FFFFFF", "#1C2C5B"]} view="front" />
+            <TileContent tile={tiles[3]} />
           </motion.div>
         </div>
       </Container>

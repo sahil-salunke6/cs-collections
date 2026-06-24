@@ -36,26 +36,30 @@ export function ProductCard({ product, className }: { product: Product; classNam
         </Link>
 
         <ProductBadges badges={product.badges} className="absolute left-3 top-3 flex flex-col gap-1.5" />
-        {off > 0 && (
-          <span className="absolute right-3 top-3 rounded-full bg-destructive px-2 py-0.5 text-[11px] font-bold text-destructive-foreground">
-            -{off}%
-          </span>
-        )}
 
+        {/* Wishlist — always visible, top-right */}
         <button
           type="button"
           onClick={() => toggle(product.id, product.name)}
           aria-label={wished ? "Remove from wishlist" : "Add to wishlist"}
-          className="absolute right-3 bottom-3 flex size-9 items-center justify-center rounded-full border border-border bg-background/90 text-foreground shadow-sm backdrop-blur transition-colors hover:bg-background"
+          className="absolute right-3 top-3 flex size-9 items-center justify-center rounded-full border border-border bg-white/90 text-gray-800 shadow-sm backdrop-blur transition-colors hover:bg-white dark:bg-neutral-900/90 dark:text-white dark:hover:bg-neutral-900"
         >
           <Heart className={cn("size-4", wished && "fill-accent text-accent")} />
         </button>
 
+        {/* Sale badge — sits below the heart so they don't overlap */}
+        {off > 0 && (
+          <span className="absolute right-3 top-14 rounded-full bg-destructive px-2 py-0.5 text-[11px] font-bold text-destructive-foreground">
+            -{off}%
+          </span>
+        )}
+
+        {/* Quick Add — slides up from bottom on hover, no conflict with heart */}
         {firstSize && (
           <button
             type="button"
             onClick={() => add(product, firstSize)}
-            className="absolute inset-x-3 bottom-3 flex translate-y-2 items-center justify-center gap-2 rounded-full bg-foreground py-2.5 text-sm font-semibold text-background opacity-0 shadow-lg transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100"
+            className="absolute inset-x-3 bottom-3 flex translate-y-2 items-center justify-center gap-2 rounded-full bg-[#111111] py-2.5 text-sm font-semibold text-white opacity-0 shadow-lg transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 dark:bg-white dark:text-[#111111]"
           >
             <ShoppingBag className="size-4" />
             Quick add

@@ -39,9 +39,9 @@ export default function AdminDashboard() {
               <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{s.label}</span>
               <s.icon className="size-4 text-primary" />
             </div>
-            <p className="mt-2 font-display text-2xl font-bold">
+            <div className="mt-2 font-display text-2xl font-bold">
               {pLoading || oLoading ? <Skeleton className="h-7 w-20" /> : s.value}
-            </p>
+            </div>
             <p className="mt-1 text-xs text-muted-foreground">{s.sub}</p>
           </div>
         ))}

@@ -4,10 +4,10 @@ import type { Collection } from "@/types";
 import { cn } from "@/lib/utils/cn";
 
 const GRADIENTS: Record<string, string> = {
-  "national-teams": "from-primary to-brand-green-deep",
-  "club-teams": "from-[#1E3A8A] to-[#0A1A3F]",
+  "national-teams": "from-primary to-brand-orange-deep",
+  "club-teams": "from-[#0F2167] to-[#060C3A]",
   retro: "from-brand-amber to-[#6B3410]",
-  "new-arrivals": "from-accent to-[#B0124E]",
+  "new-arrivals": "from-[#FF6200] to-[#0F2167]",
 };
 
 export function CollectionTiles({ collections }: { collections: Collection[] }) {
@@ -19,7 +19,7 @@ export function CollectionTiles({ collections }: { collections: Collection[] }) 
           href={c.href}
           className={cn(
             "group relative flex aspect-[4/5] flex-col justify-end overflow-hidden rounded-3xl bg-gradient-to-br p-6 text-white",
-            GRADIENTS[c.slug] ?? "from-primary to-brand-green-deep",
+            GRADIENTS[c.slug] ?? "from-primary to-brand-orange-deep",
             i === 0 && "sm:col-span-2 sm:aspect-auto lg:col-span-1 lg:aspect-[4/5]",
           )}
         >

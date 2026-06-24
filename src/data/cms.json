@@ -1,0 +1,115 @@
+{
+  "announcement": {
+    "enabled": true,
+    "text": "100% Authentic Football Jerseys · Shipping across India · Pay via UPI, Cards & Net Banking",
+    "link": null
+  },
+  "hero": {
+    "badge": "2026/27 On-Pitch Collection",
+    "line1": "Wear the Badge.",
+    "line2": "Own the Moment.",
+    "subtext": "Authentic national & club jerseys — engineered for matchday and built to last. Premium, fast, and 100% genuine.",
+    "cta1Text": "Shop New Arrivals",
+    "cta1Href": "/new-arrivals",
+    "cta2Text": "Explore Retro",
+    "cta2Href": "/retro",
+    "stats": [
+      {
+        "value": "100%",
+        "label": "Authentic"
+      },
+      {
+        "value": "90+",
+        "label": "Countries shipped"
+      },
+      {
+        "value": "4.9★",
+        "label": "Customer rating"
+      }
+    ]
+  },
+  "heroTiles": [
+    { "image": null, "colors": ["#FCE000", "#009C3B", "#002776"], "view": "front" },
+    { "image": null, "colors": ["#FFFFFF", "#FEBE10", "#00529F"], "view": "back", "name": "Madrid", "number": 7 },
+    { "image": null, "colors": ["#A50044", "#004D98", "#FFED02"], "view": "front" },
+    { "image": null, "colors": ["#6CABDD", "#FFFFFF", "#1C2C5B"], "view": "front" }
+  ],
+  "limitedBanner": {
+    "eyebrow": "Limited Edition",
+    "headline": "Rare kits. Limited runs. Gone fast.",
+    "subtext": "Special-edition and limited drops you won't find anywhere else. Secure yours before they sell out.",
+    "ctaText": "Shop Limited Edition",
+    "ctaHref": "/products?badge=limited"
+  },
+  "productOverrides": {
+    "p001": {
+      "id": "p001",
+      "slug": "brazil-2024-25-home",
+      "name": "Brazil 2024/25 Home Jersey",
+      "team": "Brazil",
+      "teamId": "br",
+      "type": "national",
+      "kit": "home",
+      "season": "2024/25",
+      "brand": "Nike",
+      "category": "Mens",
+      "confederation": "CONMEBOL",
+      "price": 1100,
+      "currency": "INR",
+      "images": [
+        "front",
+        "back",
+        "detail",
+        "/uploads/1782252515260-dea8lleuont.jpg"
+      ],
+      "video": "showcase",
+      "sizes": [
+        {
+          "size": "S",
+          "stock": 13
+        },
+        {
+          "size": "M",
+          "stock": 23
+        },
+        {
+          "size": "L",
+          "stock": 38
+        },
+        {
+          "size": "XL",
+          "stock": 25
+        },
+        {
+          "size": "XXL",
+          "stock": 0
+        }
+      ],
+      "colors": [
+        "#FCE000",
+        "#009C3B",
+        "#002776"
+      ],
+      "rating": 4.8,
+      "reviewCount": 373,
+      "tags": [
+        "Brazil",
+        "Nike",
+        "Home",
+        "2024/25",
+        "national"
+      ],
+      "badges": [
+        "bestseller"
+      ],
+      "shortDescription": "Nike Stadium Home shirt — 2024/25 season.",
+      "description": "The official Brazil 2024/25 home jersey by Nike. Engineered with sweat-wicking performance fabric and a tailored athletic fit, finished with the club crest, manufacturer mark and authentic detailing. Built for matchday and everyday wear.",
+      "teamInfo": "Brazil competes in CONMEBOL. Recognised worldwide for an iconic identity, the club/nation colours are a global symbol of the game.",
+      "seasonInfo": "Part of the 2024/25 on-pitch collection, worn by the first team in domestic and international competition.",
+      "isFeatured": true,
+      "isLimited": false,
+      "createdAt": "2026-06-14T18:30:00.000Z"
+    }
+  },
+  "newProducts": []
+}
