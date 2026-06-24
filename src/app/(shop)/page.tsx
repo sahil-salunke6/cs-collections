@@ -16,7 +16,7 @@ import { Newsletter } from "@/components/common/Newsletter";
 
 export default async function HomePage() {
   const cms = getCmsData();
-  const [nationalTeams, clubTeams, newArrivals, trending, limited, retro, collections, instagram] =
+  const [nationalTeams, clubTeams, newArrivals, trending, limited, retro, instagram] =
     await Promise.all([
       api.getFeaturedTeams("national"),
       api.getFeaturedTeams("club"),
@@ -24,7 +24,6 @@ export default async function HomePage() {
       api.getTrending(10),
       api.getLimitedEdition(6),
       api.getRetro(10),
-      api.getCollections(),
       api.getInstagram(),
     ]);
 
@@ -39,7 +38,7 @@ export default async function HomePage() {
           description="From international glory to club legends and timeless retro classics."
         />
         <div className="mt-8">
-          <CollectionTiles collections={collections} />
+          <CollectionTiles collections={cms.collections} />
         </div>
       </Section>
 

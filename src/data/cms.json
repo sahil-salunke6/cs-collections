@@ -29,10 +29,44 @@
     ]
   },
   "heroTiles": [
-    { "image": null, "colors": ["#FCE000", "#009C3B", "#002776"], "view": "front" },
-    { "image": null, "colors": ["#FFFFFF", "#FEBE10", "#00529F"], "view": "back", "name": "Madrid", "number": 7 },
-    { "image": null, "colors": ["#A50044", "#004D98", "#FFED02"], "view": "front" },
-    { "image": null, "colors": ["#6CABDD", "#FFFFFF", "#1C2C5B"], "view": "front" }
+    {
+      "image": "/uploads/1782324910751-nj8mszhl14n.jpg",
+      "colors": [
+        "#FCE000",
+        "#009C3B",
+        "#002776"
+      ],
+      "view": "front"
+    },
+    {
+      "image": "/uploads/1782324915530-21su0f92r6p.jpg",
+      "colors": [
+        "#FFFFFF",
+        "#FEBE10",
+        "#00529F"
+      ],
+      "view": "back",
+      "name": "Madrid",
+      "number": 7
+    },
+    {
+      "image": "/uploads/1782324920511-exkh4ru88b.jpg",
+      "colors": [
+        "#A50044",
+        "#004D98",
+        "#FFED02"
+      ],
+      "view": "front"
+    },
+    {
+      "image": "/uploads/1782324932282-op5c1tcndlo.jpg",
+      "colors": [
+        "#6CABDD",
+        "#FFFFFF",
+        "#1C2C5B"
+      ],
+      "view": "front"
+    }
   ],
   "limitedBanner": {
     "eyebrow": "Limited Edition",
@@ -41,6 +75,12 @@
     "ctaText": "Shop Limited Edition",
     "ctaHref": "/products?badge=limited"
   },
+  "collections": [
+    { "slug": "national-teams", "title": "National Teams", "subtitle": "Represent your nation", "href": "/national-teams" },
+    { "slug": "club-teams", "title": "Club Teams", "subtitle": "Club colours, worldwide", "href": "/club-teams" },
+    { "slug": "retro", "title": "Retro Jerseys", "subtitle": "Heritage classics reissued", "href": "/retro" },
+    { "slug": "new-arrivals", "title": "New Arrivals", "subtitle": "Freshly dropped", "href": "/new-arrivals" }
+  ],
   "productOverrides": {
     "p001": {
       "id": "p001",

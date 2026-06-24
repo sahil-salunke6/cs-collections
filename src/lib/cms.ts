@@ -46,11 +46,19 @@ export interface CmsLimitedBanner {
   ctaHref: string;
 }
 
+export interface CmsCollection {
+  slug: string;
+  title: string;
+  subtitle: string;
+  href: string;
+}
+
 export interface CmsData {
   announcement: CmsAnnouncement;
   hero: CmsHero;
   heroTiles: CmsHeroTile[];
   limitedBanner: CmsLimitedBanner;
+  collections: CmsCollection[];
   productOverrides: Record<string, Partial<Product>>;
   newProducts: Product[];
 }
@@ -90,6 +98,12 @@ const DEFAULT: CmsData = {
     ctaText: "Shop Limited Edition",
     ctaHref: "/products?badge=limited",
   },
+  collections: [
+    { slug: "national-teams", title: "National Teams", subtitle: "Represent your nation", href: "/national-teams" },
+    { slug: "club-teams", title: "Club Teams", subtitle: "Club colours, worldwide", href: "/club-teams" },
+    { slug: "retro", title: "Retro Jerseys", subtitle: "Heritage classics reissued", href: "/retro" },
+    { slug: "new-arrivals", title: "New Arrivals", subtitle: "Freshly dropped", href: "/new-arrivals" },
+  ],
   productOverrides: {},
   newProducts: [],
 };

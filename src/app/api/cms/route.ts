@@ -15,6 +15,7 @@ export async function PUT(req: Request) {
       hero: body.hero ?? current.hero,
       heroTiles: body.heroTiles ?? current.heroTiles,
       limitedBanner: body.limitedBanner ?? current.limitedBanner,
+      collections: body.collections ?? current.collections,
     };
     saveCmsData(updated);
     return NextResponse.json({ ok: true });

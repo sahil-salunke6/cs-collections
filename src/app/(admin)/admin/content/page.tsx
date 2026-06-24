@@ -7,9 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils/cn";
-import type { CmsData, CmsHeroStat, CmsHeroTile } from "@/lib/cms";
+import type { CmsData, CmsHeroStat, CmsHeroTile, CmsCollection } from "@/lib/cms";
 
-type Tab = "announcement" | "hero" | "heroImages" | "limitedBanner";
+type Tab = "announcement" | "hero" | "heroImages" | "limitedBanner" | "collections";
 
 export default function AdminContentPage() {
   const [tab, setTab] = useState<Tab>("announcement");
@@ -34,6 +34,7 @@ export default function AdminContentPage() {
         hero: data.hero,
         heroTiles: data.heroTiles,
         limitedBanner: data.limitedBanner,
+        collections: data.collections,
       }),
     });
     setSaving(false);
@@ -54,6 +55,7 @@ export default function AdminContentPage() {
     { id: "hero", label: "Hero Text" },
     { id: "heroImages", label: "Hero Images" },
     { id: "limitedBanner", label: "Limited Banner" },
+    { id: "collections", label: "Collections" },
   ];
 
   return (
@@ -112,6 +114,13 @@ export default function AdminContentPage() {
         <LimitedBannerEditor
           value={data.limitedBanner}
           onChange={(v) => setData({ ...data, limitedBanner: v })}
+        />
+      )}
+
+      {tab === "collections" && (
+        <CollectionsEditor
+          value={data.collections ?? []}
+          onChange={(v) => setData({ ...data, collections: v })}
         />
       )}
     </div>
@@ -494,6 +503,69 @@ function LimitedBannerEditor({
           </div>
         </div>
       </Preview>
+    </div>
+  );
+}
+
+const SLUG_LABELS: Record<string, string> = {
+  "national-teams": "National Teams",
+  "club-teams": "Club Teams",
+  retro: "Retro Jerseys",
+  "new-arrivals": "New Arrivals",
+};
+
+function CollectionsEditor({
+  value,
+  onChange,
+}: {
+  value: CmsCollection[];
+  onChange: (v: CmsCollection[]) => void;
+}) {
+  function update(slug: string, patch: Partial<CmsCollection>) {
+    onChange(value.map((c) => (c.slug === slug ? { ...c, ...patch } : c)));
+  }
+
+  return (
+    <div className="space-y-5 rounded-2xl border border-border bg-card p-6">
+      <div>
+        <h2 className="font-display text-lg font-semibold">Shop by Collection Tiles</h2>
+        <p className="text-sm text-muted-foreground mt-1">
+          Edit the label and link for each collection tile. Jersey visuals are automatic per category.
+        </p>
+      </div>
+      <div className="space-y-3">
+        {value.map((c) => (
+          <div key={c.slug} className="rounded-xl border border-border p-4 space-y-3">
+            <div className="flex items-center gap-2">
+              <Badge variant="muted" className="font-mono text-xs">{c.slug}</Badge>
+              <span className="text-sm font-semibold text-foreground">{SLUG_LABELS[c.slug] ?? c.slug}</span>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-3">
+              <Field label="Title">
+                <Input
+                  value={c.title}
+                  onChange={(e) => update(c.slug, { title: e.target.value })}
+                  placeholder="e.g. National Teams"
+                />
+              </Field>
+              <Field label="Subtitle">
+                <Input
+                  value={c.subtitle}
+                  onChange={(e) => update(c.slug, { subtitle: e.target.value })}
+                  placeholder="e.g. Represent your nation"
+                />
+              </Field>
+              <Field label="Link URL">
+                <Input
+                  value={c.href}
+                  onChange={(e) => update(c.slug, { href: e.target.value })}
+                  placeholder="/national-teams"
+                />
+              </Field>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
