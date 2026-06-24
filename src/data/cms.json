@@ -28,6 +28,19 @@
       }
     ]
   },
+  "heroTiles": [
+    { "image": null, "colors": ["#FCE000", "#009C3B", "#002776"], "view": "front" },
+    { "image": null, "colors": ["#FFFFFF", "#FEBE10", "#00529F"], "view": "back", "name": "Madrid", "number": 7 },
+    { "image": null, "colors": ["#A50044", "#004D98", "#FFED02"], "view": "front" },
+    { "image": null, "colors": ["#6CABDD", "#FFFFFF", "#1C2C5B"], "view": "front" }
+  ],
+  "limitedBanner": {
+    "eyebrow": "Limited Edition",
+    "headline": "Rare kits. Limited runs. Gone fast.",
+    "subtext": "Special-edition and limited drops you won't find anywhere else. Secure yours before they sell out.",
+    "ctaText": "Shop Limited Edition",
+    "ctaHref": "/products?badge=limited"
+  },
   "productOverrides": {
     "p001": {
       "id": "p001",

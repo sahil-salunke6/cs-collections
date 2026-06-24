@@ -30,9 +30,27 @@ export interface CmsHero {
   stats: CmsHeroStat[];
 }
 
+export interface CmsHeroTile {
+  image: string | null;  // uploaded URL; null = use JerseyVisual fallback
+  colors: string[];
+  view: "front" | "back";
+  name?: string;
+  number?: number;
+}
+
+export interface CmsLimitedBanner {
+  eyebrow: string;
+  headline: string;
+  subtext: string;
+  ctaText: string;
+  ctaHref: string;
+}
+
 export interface CmsData {
   announcement: CmsAnnouncement;
   hero: CmsHero;
+  heroTiles: CmsHeroTile[];
+  limitedBanner: CmsLimitedBanner;
   productOverrides: Record<string, Partial<Product>>;
   newProducts: Product[];
 }
@@ -58,6 +76,19 @@ const DEFAULT: CmsData = {
       { value: "90+", label: "Countries shipped" },
       { value: "4.9★", label: "Customer rating" },
     ],
+  },
+  heroTiles: [
+    { image: null, colors: ["#FCE000", "#009C3B", "#002776"], view: "front" },
+    { image: null, colors: ["#FFFFFF", "#FEBE10", "#00529F"], view: "back", name: "Madrid", number: 7 },
+    { image: null, colors: ["#A50044", "#004D98", "#FFED02"], view: "front" },
+    { image: null, colors: ["#6CABDD", "#FFFFFF", "#1C2C5B"], view: "front" },
+  ],
+  limitedBanner: {
+    eyebrow: "Limited Edition",
+    headline: "Rare kits. Limited runs. Gone fast.",
+    subtext: "Special-edition and limited drops you won't find anywhere else. Secure yours before they sell out.",
+    ctaText: "Shop Limited Edition",
+    ctaHref: "/products?badge=limited",
   },
   productOverrides: {},
   newProducts: [],

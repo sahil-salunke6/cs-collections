@@ -6,7 +6,7 @@ import { ArrowRight, Sparkles } from "lucide-react";
 import { Container } from "@/components/common/Container";
 import { Button } from "@/components/ui/button";
 import { JerseyVisual } from "@/components/common/JerseyVisual";
-import type { CmsHero } from "@/lib/cms";
+import type { CmsHero, CmsHeroTile } from "@/lib/cms";
 
 const float = {
   animate: { y: [0, -14, 0] },
@@ -30,8 +30,25 @@ const DEFAULT: CmsHero = {
   ],
 };
 
-export function Hero({ heroContent }: { heroContent?: CmsHero }) {
+const DEFAULT_TILES: CmsHeroTile[] = [
+  { image: null, colors: ["#FCE000", "#009C3B", "#002776"], view: "front" },
+  { image: null, colors: ["#FFFFFF", "#FEBE10", "#00529F"], view: "back", name: "Madrid", number: 7 },
+  { image: null, colors: ["#A50044", "#004D98", "#FFED02"], view: "front" },
+  { image: null, colors: ["#6CABDD", "#FFFFFF", "#1C2C5B"], view: "front" },
+];
+
+function TileContent({ tile }: { tile: CmsHeroTile }) {
+  if (tile.image) {
+    return <img src={tile.image} alt="" className="h-full w-full object-cover" />;
+  }
+  return (
+    <JerseyVisual colors={tile.colors} view={tile.view} name={tile.name} number={tile.number} />
+  );
+}
+
+export function Hero({ heroContent, heroTiles }: { heroContent?: CmsHero; heroTiles?: CmsHeroTile[] }) {
   const h: CmsHero = { ...DEFAULT, ...heroContent };
+  const tiles = heroTiles && heroTiles.length === 4 ? heroTiles : DEFAULT_TILES;
 
   return (
     <section className="relative overflow-hidden border-b border-border bg-card theme-transition">
@@ -78,24 +95,24 @@ export function Hero({ heroContent }: { heroContent?: CmsHero }) {
 
         <div className="relative mx-auto grid w-full max-w-md grid-cols-2 gap-4">
           <motion.div {...float} className="overflow-hidden rounded-3xl border border-border bg-background shadow-xl">
-            <JerseyVisual colors={["#FCE000", "#009C3B", "#002776"]} view="front" />
+            <TileContent tile={tiles[0]} />
           </motion.div>
           <motion.div
             animate={{ y: [0, 14, 0] }}
             transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 0.6 }}
             className="mt-10 overflow-hidden rounded-3xl border border-border bg-background shadow-xl"
           >
-            <JerseyVisual colors={["#FFFFFF", "#FEBE10", "#00529F"]} view="back" name="Madrid" number={7} />
+            <TileContent tile={tiles[1]} />
           </motion.div>
           <motion.div
             animate={{ y: [0, 12, 0] }}
             transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 0.3 }}
             className="-mt-2 overflow-hidden rounded-3xl border border-border bg-background shadow-xl"
           >
-            <JerseyVisual colors={["#A50044", "#004D98", "#FFED02"]} view="front" />
+            <TileContent tile={tiles[2]} />
           </motion.div>
           <motion.div {...float} className="overflow-hidden rounded-3xl border border-border bg-background shadow-xl">
-            <JerseyVisual colors={["#6CABDD", "#FFFFFF", "#1C2C5B"]} view="front" />
+            <TileContent tile={tiles[3]} />
           </motion.div>
         </div>
       </Container>

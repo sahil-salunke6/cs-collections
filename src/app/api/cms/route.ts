@@ -13,6 +13,8 @@ export async function PUT(req: Request) {
       ...current,
       announcement: body.announcement ?? current.announcement,
       hero: body.hero ?? current.hero,
+      heroTiles: body.heroTiles ?? current.heroTiles,
+      limitedBanner: body.limitedBanner ?? current.limitedBanner,
     };
     saveCmsData(updated);
     return NextResponse.json({ ok: true });
