@@ -127,6 +127,10 @@ export async function getFeaturedTeams(type?: Team["type"]) {
   await delay(140);
   return teams.filter((t) => t.featured && (!type || t.type === type));
 }
+export async function getTeamsBySlugs(slugs: string[], pool: Team[] = teams): Promise<Team[]> {
+  await delay(100);
+  return slugs.map((slug) => pool.find((t) => t.slug === slug)).filter(Boolean) as Team[];
+}
 export async function getTeamBySlug(slug: string): Promise<Team | null> {
   await delay(120);
   return teams.find((t) => t.slug === slug) ?? null;

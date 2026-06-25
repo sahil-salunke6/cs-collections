@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Plus, Pencil, Trash2, ExternalLink, Loader2, Search, ImagePlus } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { Plus, Pencil, Trash2, ExternalLink, Loader2, Search, ImagePlus, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -12,9 +14,11 @@ import { cn } from "@/lib/utils/cn";
 import type { Product } from "@/types";
 
 export default function AdminProductsPage() {
+  const router = useRouter();
   const [products, setProducts] = useState<Product[] | null>(null);
   const [query, setQuery] = useState("");
   const [deleting, setDeleting] = useState<string | null>(null);
+  const [duplicating, setDuplicating] = useState<string | null>(null);
 
   async function load() {
     const r = await fetch("/api/cms/products");
@@ -29,6 +33,28 @@ export default function AdminProductsPage() {
     await fetch(`/api/cms/products/${id}`, { method: "DELETE" });
     setDeleting(null);
     load();
+  }
+
+  async function duplicateProduct(p: Product) {
+    setDuplicating(p.id);
+    const stamp = Date.now();
+    const copy: Product = {
+      ...p,
+      id: `new-${stamp}`,
+      name: `${p.name} (Copy)`,
+      slug: `${p.slug || "product"}-copy-${stamp.toString(36)}`,
+      isFeatured: false,
+      createdAt: new Date().toISOString(),
+    };
+    await fetch("/api/cms/products", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(copy),
+    });
+    setDuplicating(null);
+    toast.success("Product duplicated", { description: "Edit the copy and save your changes." });
+    // Jump straight into editing the new copy.
+    router.push(`/admin/products/${copy.id}/edit`);
   }
 
   const filtered = (products ?? []).filter((p) =>
@@ -117,7 +143,7 @@ export default function AdminProductsPage() {
                                 <ExternalLink className="size-3.5" />
                               </Link>
                             </Button>
-                            <Button asChild size="icon" variant="ghost" className="size-8">
+                            <Button asChild size="icon" variant="ghost" className="size-8" title="Edit">
                               <Link href={`/admin/products/${p.id}/edit`}>
                                 <Pencil className="size-3.5" />
                               </Link>
@@ -125,7 +151,22 @@ export default function AdminProductsPage() {
                             <Button
                               size="icon"
                               variant="ghost"
+                              className="size-8"
+                              title="Duplicate — make an editable copy"
+                              onClick={() => duplicateProduct(p)}
+                              disabled={duplicating === p.id}
+                            >
+                              {duplicating === p.id ? (
+                                <Loader2 className="size-3.5 animate-spin" />
+                              ) : (
+                                <Copy className="size-3.5" />
+                              )}
+                            </Button>
+                            <Button
+                              size="icon"
+                              variant="ghost"
                               className="size-8 text-muted-foreground hover:text-destructive"
+                              title="Delete"
                               onClick={() => deleteProduct(p.id)}
                               disabled={deleting === p.id}
                             >

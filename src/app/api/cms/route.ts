@@ -16,6 +16,11 @@ export async function PUT(req: Request) {
       heroTiles: body.heroTiles ?? current.heroTiles,
       limitedBanner: body.limitedBanner ?? current.limitedBanner,
       collections: body.collections ?? current.collections,
+      featuredTeams: body.featuredTeams ?? current.featuredTeams,
+      customTeams: body.customTeams ?? current.customTeams,
+      teamOverrides: body.teamOverrides ?? current.teamOverrides,
+      reviews: body.reviews ?? current.reviews,
+      instagramPosts: body.instagramPosts ?? current.instagramPosts,
     };
     saveCmsData(updated);
     return NextResponse.json({ ok: true });

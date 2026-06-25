@@ -1,15 +1,44 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Plus, Trash2, Save, Loader2, Upload, X } from "lucide-react";
+import { toast } from "sonner";
+import { ChevronDown, ChevronUp, ImagePlus, Loader2, Plus, Save, Trash2, Upload, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils/cn";
-import type { CmsData, CmsHeroStat, CmsHeroTile, CmsCollection } from "@/lib/cms";
+import type {
+  CmsCollection,
+  CmsData,
+  CmsFeaturedTeams,
+  CmsHeroStat,
+  CmsHeroTile,
+  CmsInstagramPost,
+  CmsReview,
+} from "@/lib/cms";
+import type { Team } from "@/types";
+import teamsData from "@/data/teams.json";
 
-type Tab = "announcement" | "hero" | "heroImages" | "limitedBanner" | "collections";
+const BASE_TEAMS = teamsData as Team[];
+
+function slugify(name: string) {
+  return name
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+type Tab =
+  | "announcement"
+  | "hero"
+  | "heroImages"
+  | "limitedBanner"
+  | "collections"
+  | "featuredTeams"
+  | "reviews"
+  | "instagram";
 
 export default function AdminContentPage() {
   const [tab, setTab] = useState<Tab>("announcement");
@@ -26,20 +55,32 @@ export default function AdminContentPage() {
   async function save() {
     if (!data) return;
     setSaving(true);
-    await fetch("/api/cms", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        announcement: data.announcement,
-        hero: data.hero,
-        heroTiles: data.heroTiles,
-        limitedBanner: data.limitedBanner,
-        collections: data.collections,
-      }),
-    });
-    setSaving(false);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2500);
+    try {
+      const res = await fetch("/api/cms", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          announcement: data.announcement,
+          hero: data.hero,
+          heroTiles: data.heroTiles,
+          limitedBanner: data.limitedBanner,
+          collections: data.collections,
+          featuredTeams: data.featuredTeams,
+          customTeams: data.customTeams,
+          teamOverrides: data.teamOverrides,
+          reviews: data.reviews,
+          instagramPosts: data.instagramPosts,
+        }),
+      });
+      if (!res.ok) throw new Error("Request failed");
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2500);
+      toast.success("Content saved", { description: "Your changes are now live on the site." });
+    } catch {
+      toast.error("Couldn't save", { description: "Something went wrong. Please try again." });
+    } finally {
+      setSaving(false);
+    }
   }
 
   if (!data) {
@@ -56,6 +97,9 @@ export default function AdminContentPage() {
     { id: "heroImages", label: "Hero Images" },
     { id: "limitedBanner", label: "Limited Banner" },
     { id: "collections", label: "Collections" },
+    { id: "featuredTeams", label: "Featured Teams" },
+    { id: "reviews", label: "Reviews" },
+    { id: "instagram", label: "Instagram" },
   ];
 
   return (
@@ -63,7 +107,7 @@ export default function AdminContentPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-display text-2xl font-bold tracking-tight">Content Editor</h1>
-          <p className="text-sm text-muted-foreground">Edit homepage content, banners, and hero images.</p>
+          <p className="text-sm text-muted-foreground">Edit homepage content, banners, and media.</p>
         </div>
         <Button onClick={save} disabled={saving} size="sm">
           {saving ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}
@@ -92,40 +136,57 @@ export default function AdminContentPage() {
       {tab === "announcement" && (
         <AnnouncementEditor
           value={data.announcement}
-          onChange={(v) => setData({ ...data, announcement: v })}
+          onChange={(v) => setData((d) => (d ? { ...d, announcement: v } : d))}
         />
       )}
-
       {tab === "hero" && (
-        <HeroEditor
-          value={data.hero}
-          onChange={(v) => setData({ ...data, hero: v })}
-        />
+        <HeroEditor value={data.hero} onChange={(v) => setData((d) => (d ? { ...d, hero: v } : d))} />
       )}
-
       {tab === "heroImages" && (
         <HeroImagesEditor
           value={data.heroTiles ?? []}
-          onChange={(v) => setData({ ...data, heroTiles: v })}
+          onChange={(v) => setData((d) => (d ? { ...d, heroTiles: v } : d))}
         />
       )}
-
       {tab === "limitedBanner" && (
         <LimitedBannerEditor
           value={data.limitedBanner}
-          onChange={(v) => setData({ ...data, limitedBanner: v })}
+          onChange={(v) => setData((d) => (d ? { ...d, limitedBanner: v } : d))}
         />
       )}
-
       {tab === "collections" && (
         <CollectionsEditor
           value={data.collections ?? []}
-          onChange={(v) => setData({ ...data, collections: v })}
+          onChange={(v) => setData((d) => (d ? { ...d, collections: v } : d))}
+        />
+      )}
+      {tab === "featuredTeams" && (
+        <FeaturedTeamsEditor
+          value={data.featuredTeams ?? { national: [], club: [] }}
+          onChange={(v) => setData((d) => (d ? { ...d, featuredTeams: v } : d))}
+          customTeams={data.customTeams ?? []}
+          onCustomTeamsChange={(v) => setData((d) => (d ? { ...d, customTeams: v } : d))}
+          teamOverrides={data.teamOverrides ?? {}}
+          onTeamOverridesChange={(v) => setData((d) => (d ? { ...d, teamOverrides: v } : d))}
+        />
+      )}
+      {tab === "reviews" && (
+        <ReviewsEditor
+          value={data.reviews ?? []}
+          onChange={(v) => setData((d) => (d ? { ...d, reviews: v } : d))}
+        />
+      )}
+      {tab === "instagram" && (
+        <InstagramEditor
+          value={data.instagramPosts ?? []}
+          onChange={(v) => setData((d) => (d ? { ...d, instagramPosts: v } : d))}
         />
       )}
     </div>
   );
 }
+
+// ── Announcement ──────────────────────────────────────────────────
 
 function AnnouncementEditor({
   value,
@@ -183,6 +244,8 @@ function AnnouncementEditor({
     </div>
   );
 }
+
+// ── Hero ──────────────────────────────────────────────────────────
 
 function HeroEditor({
   value,
@@ -310,6 +373,8 @@ function HeroEditor({
   );
 }
 
+// ── Hero Images ───────────────────────────────────────────────────
+
 const TILE_LABELS = ["Top-left tile", "Top-right tile", "Bottom-left tile", "Bottom-right tile"];
 
 function HeroImagesEditor({
@@ -406,19 +471,17 @@ function TileUploader({
         </div>
       )}
 
-      <input
-        ref={fileRef}
-        type="file"
-        accept="image/*"
-        className="hidden"
-        onChange={handleFile}
-      />
+      <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleFile} />
 
       {!tile.image && (
         <p className="text-[11px] text-muted-foreground">
           Fallback: jersey visual with colors{" "}
           {tile.colors.map((c, ci) => (
-            <span key={ci} className="inline-block size-3 rounded-full border border-border align-middle mx-0.5" style={{ backgroundColor: c }} />
+            <span
+              key={ci}
+              className="inline-block size-3 rounded-full border border-border align-middle mx-0.5"
+              style={{ backgroundColor: c }}
+            />
           ))}
         </p>
       )}
@@ -431,6 +494,8 @@ function TileUploader({
     </div>
   );
 }
+
+// ── Limited Banner ─────────────────────────────────────────────────
 
 function LimitedBannerEditor({
   value,
@@ -507,6 +572,8 @@ function LimitedBannerEditor({
   );
 }
 
+// ── Collections ────────────────────────────────────────────────────
+
 const SLUG_LABELS: Record<string, string> = {
   "national-teams": "National Teams",
   "club-teams": "Club Teams",
@@ -569,6 +636,767 @@ function CollectionsEditor({
     </div>
   );
 }
+
+// ── Featured Teams ─────────────────────────────────────────────────
+
+function FeaturedTeamsEditor({
+  value,
+  onChange,
+  customTeams,
+  onCustomTeamsChange,
+  teamOverrides,
+  onTeamOverridesChange,
+}: {
+  value: CmsFeaturedTeams;
+  onChange: (v: CmsFeaturedTeams) => void;
+  customTeams: Team[];
+  onCustomTeamsChange: (v: Team[]) => void;
+  teamOverrides: Record<string, Partial<Team>>;
+  onTeamOverridesChange: (v: Record<string, Partial<Team>>) => void;
+}) {
+  // Base teams with admin overrides applied, then custom teams.
+  const baseWithOverrides = BASE_TEAMS.map((t) =>
+    teamOverrides[t.id] ? { ...t, ...teamOverrides[t.id] } : t,
+  );
+  const allTeams = [...baseWithOverrides, ...customTeams];
+  const customIds = new Set(customTeams.map((t) => t.id));
+  const customSlugs = new Set(customTeams.map((t) => t.slug));
+
+  function toggle(type: "national" | "club", slug: string, add: boolean) {
+    if (add) onChange({ ...value, [type]: [...value[type], slug] });
+    else onChange({ ...value, [type]: value[type].filter((s) => s !== slug) });
+  }
+
+  // Reorder works on the *resolved* featured slugs (only those that map to a real
+  // team, in display order), so its indices always line up with the rendered list.
+  // Writing the resolved order back also self-heals any dangling slugs.
+  function move(type: "national" | "club", orderedSlugs: string[], index: number, dir: -1 | 1) {
+    const arr = [...orderedSlugs];
+    const ni = index + dir;
+    if (ni < 0 || ni >= arr.length) return;
+    [arr[index], arr[ni]] = [arr[ni], arr[index]];
+    onChange({ ...value, [type]: arr });
+  }
+
+  function addCustomTeam(team: Team) {
+    onCustomTeamsChange([...customTeams, team]);
+    // Auto-feature the new team in its section so it shows up immediately.
+    onChange({ ...value, [team.type]: [...value[team.type as "national" | "club"], team.slug] });
+  }
+
+  function deleteCustomTeam(slug: string) {
+    if (!confirm("Delete this custom team? It will be removed from the homepage.")) return;
+    onCustomTeamsChange(customTeams.filter((t) => t.slug !== slug));
+    onChange({
+      national: value.national.filter((s) => s !== slug),
+      club: value.club.filter((s) => s !== slug),
+    });
+  }
+
+  // Edit any team — custom teams are updated in place; base teams get an override entry.
+  function updateTeam(team: Team, patch: Partial<Team>) {
+    if (customIds.has(team.id)) {
+      onCustomTeamsChange(customTeams.map((t) => (t.id === team.id ? { ...t, ...patch } : t)));
+    } else {
+      onTeamOverridesChange({
+        ...teamOverrides,
+        [team.id]: { ...(teamOverrides[team.id] ?? {}), ...patch },
+      });
+    }
+    // If the category changed, move the team between the featured lists.
+    if (patch.type && patch.type !== team.type) {
+      const newType = patch.type as "national" | "club";
+      const oldType = team.type as "national" | "club";
+      const wasFeatured = value[oldType].includes(team.slug);
+      const next: CmsFeaturedTeams = {
+        national: value.national.filter((s) => s !== team.slug),
+        club: value.club.filter((s) => s !== team.slug),
+      };
+      if (wasFeatured) next[newType] = [...next[newType], team.slug];
+      onChange(next);
+    }
+  }
+
+  function resetTeam(id: string) {
+    const next = { ...teamOverrides };
+    delete next[id];
+    onTeamOverridesChange(next);
+  }
+
+  function renderSection(type: "national" | "club", sectionLabel: string) {
+    const teamsOfType = allTeams.filter((t) => t.type === type);
+    const featured = value[type] ?? [];
+    const featuredList = featured
+      .map((s) => teamsOfType.find((t) => t.slug === s))
+      .filter(Boolean) as Team[];
+    // Slugs that actually resolve, in display order — kept in lock-step with featuredList.
+    const orderedSlugs = featuredList.map((t) => t.slug);
+    const available = teamsOfType.filter((t) => !featured.includes(t.slug));
+
+    return (
+      <div className="space-y-4">
+        <h3 className="font-semibold text-foreground">{sectionLabel}</h3>
+
+        <div>
+          <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+            Featured on homepage ({featuredList.length})
+          </p>
+          {featuredList.length === 0 && (
+            <p className="rounded-lg border border-dashed border-border py-4 text-center text-sm italic text-muted-foreground">
+              No teams featured — add from the list below
+            </p>
+          )}
+          <div className="space-y-2">
+            {featuredList.map((team, i) => (
+              <div
+                key={team.slug}
+                className="flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-2"
+              >
+                <TeamBadgeDot team={team} />
+                <span className="flex-1 text-sm font-medium">{team.name}</span>
+                {customSlugs.has(team.slug) && (
+                  <Badge variant="accent" className="text-[10px]">Custom</Badge>
+                )}
+                <button
+                  onClick={() => move(type, orderedSlugs, i, -1)}
+                  disabled={i === 0}
+                  className="text-muted-foreground transition-colors hover:text-foreground disabled:opacity-25"
+                  title="Move up"
+                >
+                  <ChevronUp className="size-4" />
+                </button>
+                <button
+                  onClick={() => move(type, orderedSlugs, i, 1)}
+                  disabled={i === featuredList.length - 1}
+                  className="text-muted-foreground transition-colors hover:text-foreground disabled:opacity-25"
+                  title="Move down"
+                >
+                  <ChevronDown className="size-4" />
+                </button>
+                <button
+                  onClick={() => toggle(type, team.slug, false)}
+                  className="ml-1 text-muted-foreground transition-colors hover:text-destructive"
+                  title="Remove from homepage"
+                >
+                  <X className="size-4" />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {available.length > 0 && (
+          <div>
+            <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+              Available (not featured)
+            </p>
+            <div className="space-y-2">
+              {available.map((team) => (
+                <div
+                  key={team.slug}
+                  className="flex items-center gap-2 rounded-lg border border-dashed border-border px-3 py-2"
+                >
+                  <TeamBadgeDot team={team} />
+                  <span className="flex-1 text-sm text-muted-foreground">{team.name}</span>
+                  {customSlugs.has(team.slug) && (
+                    <button
+                      onClick={() => deleteCustomTeam(team.slug)}
+                      className="text-muted-foreground transition-colors hover:text-destructive"
+                      title="Delete custom team"
+                    >
+                      <Trash2 className="size-3.5" />
+                    </button>
+                  )}
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => toggle(type, team.slug, true)}
+                    className="h-7 text-xs"
+                  >
+                    <Plus className="size-3" /> Add
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6 rounded-2xl border border-border bg-card p-6">
+      <div>
+        <h2 className="font-display text-lg font-semibold">Featured Teams</h2>
+        <p className="text-sm text-muted-foreground mt-1">
+          Choose which teams appear in the homepage team sections, control their order, and create
+          your own teams with custom badges.
+        </p>
+      </div>
+
+      <AddTeamForm existingSlugs={new Set(allTeams.map((t) => t.slug))} onAdd={addCustomTeam} />
+
+      <ManageTeamsPanel
+        teams={allTeams}
+        customIds={customIds}
+        overriddenIds={new Set(Object.keys(teamOverrides))}
+        onUpdate={updateTeam}
+        onReset={resetTeam}
+        onDelete={(team) => deleteCustomTeam(team.slug)}
+      />
+
+      <div className="grid gap-8 lg:grid-cols-2">
+        {renderSection("national", "National Teams")}
+        {renderSection("club", "Club Teams")}
+      </div>
+    </div>
+  );
+}
+
+function ManageTeamsPanel({
+  teams,
+  customIds,
+  overriddenIds,
+  onUpdate,
+  onReset,
+  onDelete,
+}: {
+  teams: Team[];
+  customIds: Set<string>;
+  overriddenIds: Set<string>;
+  onUpdate: (team: Team, patch: Partial<Team>) => void;
+  onReset: (id: string) => void;
+  onDelete: (team: Team) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const customCount = teams.filter((t) => customIds.has(t.id)).length;
+
+  return (
+    <div className="rounded-xl border border-border">
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="flex w-full items-center justify-between px-4 py-3 text-left"
+      >
+        <span className="text-sm font-semibold">
+          Manage all teams
+          <span className="ml-2 font-normal text-muted-foreground">
+            ({teams.length} total · {customCount} custom)
+          </span>
+        </span>
+        {open ? <ChevronUp className="size-4" /> : <ChevronDown className="size-4" />}
+      </button>
+
+      {open && (
+        <div className="space-y-2 border-t border-border p-4">
+          <p className="text-xs text-muted-foreground">
+            Edit any team&apos;s name, badge, category or colour. Built-in teams can be reset to their
+            original; teams you created can be deleted.
+          </p>
+          {teams.map((team) => (
+            <TeamRow
+              key={team.id}
+              team={team}
+              isCustom={customIds.has(team.id)}
+              isOverridden={overriddenIds.has(team.id)}
+              onUpdate={(patch) => onUpdate(team, patch)}
+              onReset={() => onReset(team.id)}
+              onDelete={() => onDelete(team)}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function TeamRow({
+  team,
+  isCustom,
+  isOverridden,
+  onUpdate,
+  onReset,
+  onDelete,
+}: {
+  team: Team;
+  isCustom: boolean;
+  isOverridden: boolean;
+  onUpdate: (patch: Partial<Team>) => void;
+  onReset: () => void;
+  onDelete: () => void;
+}) {
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+
+  async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    const form = new FormData();
+    form.append("file", file);
+    const res = await fetch("/api/cms/upload", { method: "POST", body: form });
+    const json = await res.json();
+    setUploading(false);
+    if (json.url) onUpdate({ crest: json.url });
+    if (fileRef.current) fileRef.current.value = "";
+  }
+
+  return (
+    <div className="flex flex-wrap items-end gap-3 rounded-lg border border-border bg-background p-3">
+      {/* Badge */}
+      <div className="space-y-1.5">
+        <label className="text-[11px] font-medium text-muted-foreground">Badge</label>
+        {team.crest ? (
+          <div className="relative size-12 overflow-hidden rounded-lg border border-border">
+            <img src={team.crest} alt="" className="size-full object-contain" />
+            <button
+              onClick={() => onUpdate({ crest: "" })}
+              className="absolute right-0 top-0 flex size-4 items-center justify-center rounded-bl bg-black/60 text-white hover:bg-black/80"
+              title="Remove badge"
+            >
+              <X className="size-2.5" />
+            </button>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => fileRef.current?.click()}
+            className="flex size-12 items-center justify-center rounded-lg border-2 border-dashed border-border text-muted-foreground transition-colors hover:border-primary/50"
+            title="Upload badge"
+          >
+            {uploading ? <Loader2 className="size-3.5 animate-spin" /> : <ImagePlus className="size-3.5" />}
+          </button>
+        )}
+        <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleFile} />
+      </div>
+
+      <div className="min-w-[140px] flex-1 space-y-1.5">
+        <label className="flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground">
+          Name
+          {isCustom ? (
+            <Badge variant="accent" className="text-[9px]">Custom</Badge>
+          ) : isOverridden ? (
+            <Badge variant="muted" className="text-[9px]">Edited</Badge>
+          ) : null}
+        </label>
+        <Input value={team.name} onChange={(e) => onUpdate({ name: e.target.value })} />
+      </div>
+
+      <div className="space-y-1.5">
+        <label className="text-[11px] font-medium text-muted-foreground">Category</label>
+        <select
+          value={team.type}
+          onChange={(e) => onUpdate({ type: e.target.value as Team["type"] })}
+          className="flex h-10 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
+        >
+          <option value="national">National</option>
+          <option value="club">Club</option>
+        </select>
+      </div>
+
+      <div className="space-y-1.5">
+        <label className="text-[11px] font-medium text-muted-foreground">Colour</label>
+        <Input
+          type="color"
+          value={team.primaryColor}
+          onChange={(e) => onUpdate({ primaryColor: e.target.value })}
+          className="h-10 w-14 cursor-pointer p-1"
+        />
+      </div>
+
+      {isCustom ? (
+        <button
+          onClick={onDelete}
+          className="mb-1 text-muted-foreground transition-colors hover:text-destructive"
+          title="Delete team"
+        >
+          <Trash2 className="size-4" />
+        </button>
+      ) : (
+        <Button
+          size="sm"
+          variant="ghost"
+          className="mb-0.5 h-8 text-xs"
+          disabled={!isOverridden}
+          onClick={onReset}
+          title={isOverridden ? "Reset to original" : "No changes to reset"}
+        >
+          Reset
+        </Button>
+      )}
+    </div>
+  );
+}
+
+function TeamBadgeDot({ team }: { team: Team }) {
+  if (team.crest) {
+    return (
+      <span className="size-7 shrink-0 overflow-hidden rounded-full border border-border bg-background">
+        <img src={team.crest} alt="" className="size-full object-contain" />
+      </span>
+    );
+  }
+  return (
+    <span
+      className="flex size-7 shrink-0 items-center justify-center rounded-full border border-border/60 text-[10px] font-bold text-white"
+      style={{ backgroundColor: team.primaryColor }}
+    >
+      {team.name.split(" ").map((w) => w[0]).join("").slice(0, 3).toUpperCase()}
+    </span>
+  );
+}
+
+function AddTeamForm({
+  existingSlugs,
+  onAdd,
+}: {
+  existingSlugs: Set<string>;
+  onAdd: (team: Team) => void;
+}) {
+  const [name, setName] = useState("");
+  const [type, setType] = useState<"national" | "club">("national");
+  const [color, setColor] = useState("#FF6200");
+  const [crest, setCrest] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    const form = new FormData();
+    form.append("file", file);
+    const res = await fetch("/api/cms/upload", { method: "POST", body: form });
+    const json = await res.json();
+    setUploading(false);
+    if (json.url) setCrest(json.url);
+    if (fileRef.current) fileRef.current.value = "";
+  }
+
+  function uniqueSlug(base: string) {
+    let slug = base || "team";
+    let n = 2;
+    while (existingSlugs.has(slug)) slug = `${base}-${n++}`;
+    return slug;
+  }
+
+  function submit() {
+    const trimmed = name.trim();
+    if (!trimmed) return;
+    const slug = uniqueSlug(slugify(trimmed));
+    onAdd({
+      id: `ct-${Date.now()}`,
+      slug,
+      name: trimmed,
+      type,
+      crest: crest ?? "",
+      primaryColor: color,
+      productCount: 0,
+      featured: false,
+    });
+    setName("");
+    setCrest(null);
+    setColor("#FF6200");
+    setType("national");
+  }
+
+  return (
+    <div className="rounded-xl border border-dashed border-border bg-muted/30 p-4">
+      <p className="mb-3 text-sm font-semibold">Add a new team</p>
+      <div className="flex flex-wrap items-end gap-4">
+        {/* Badge upload */}
+        <div className="space-y-1.5">
+          <label className="text-xs font-medium text-muted-foreground">Badge (optional)</label>
+          {crest ? (
+            <div className="relative size-16 overflow-hidden rounded-lg border border-border">
+              <img src={crest} alt="" className="size-full object-contain" />
+              <button
+                onClick={() => setCrest(null)}
+                className="absolute right-0.5 top-0.5 flex size-5 items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/80"
+              >
+                <X className="size-3" />
+              </button>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => fileRef.current?.click()}
+              className="flex size-16 flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed border-border bg-background text-muted-foreground transition-colors hover:border-primary/50"
+            >
+              {uploading ? <Loader2 className="size-4 animate-spin" /> : <ImagePlus className="size-4" />}
+            </button>
+          )}
+          <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleFile} />
+        </div>
+
+        <div className="min-w-[160px] flex-1 space-y-1.5">
+          <label className="text-xs font-medium text-muted-foreground">Team name</label>
+          <Input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="e.g. Netherlands, AC Milan"
+            onKeyDown={(e) => e.key === "Enter" && submit()}
+          />
+        </div>
+
+        <div className="space-y-1.5">
+          <label className="text-xs font-medium text-muted-foreground">Category</label>
+          <select
+            value={type}
+            onChange={(e) => setType(e.target.value as "national" | "club")}
+            className="flex h-10 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
+          >
+            <option value="national">National</option>
+            <option value="club">Club</option>
+          </select>
+        </div>
+
+        <div className="space-y-1.5">
+          <label className="text-xs font-medium text-muted-foreground">Colour</label>
+          <Input
+            type="color"
+            value={color}
+            onChange={(e) => setColor(e.target.value)}
+            className="h-10 w-14 cursor-pointer p-1"
+          />
+        </div>
+
+        <Button onClick={submit} disabled={!name.trim()} className="h-10">
+          <Plus className="size-4" /> Add team
+        </Button>
+      </div>
+      <p className="mt-2.5 text-xs text-muted-foreground">
+        No badge image? Leave it empty — a coloured badge with the team&apos;s initials is generated
+        automatically. New teams are added to the homepage right away.
+      </p>
+    </div>
+  );
+}
+
+// ── Reviews ────────────────────────────────────────────────────────
+
+function ReviewsEditor({
+  value,
+  onChange,
+}: {
+  value: CmsReview[];
+  onChange: (v: CmsReview[]) => void;
+}) {
+  function update(id: string, patch: Partial<CmsReview>) {
+    onChange(value.map((r) => (r.id === id ? { ...r, ...patch } : r)));
+  }
+  function remove(id: string) {
+    onChange(value.filter((r) => r.id !== id));
+  }
+  function add() {
+    const id = `r${Date.now()}`;
+    onChange([...value, { id, author: "", location: "", rating: 5, text: "" }]);
+  }
+
+  return (
+    <div className="space-y-5 rounded-2xl border border-border bg-card p-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="font-display text-lg font-semibold">Customer Reviews</h2>
+          <p className="text-sm text-muted-foreground mt-1">
+            Reviews shown in the homepage carousel. Up to 4 show side-by-side on desktop.
+          </p>
+        </div>
+        <Button size="sm" variant="outline" onClick={add}>
+          <Plus className="size-3.5" /> Add Review
+        </Button>
+      </div>
+
+      {value.length === 0 && (
+        <p className="py-8 text-center text-sm text-muted-foreground">
+          No reviews yet — add one to get started.
+        </p>
+      )}
+
+      <div className="space-y-4">
+        {value.map((review) => (
+          <div key={review.id} className="rounded-xl border border-border p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <StarPicker value={review.rating} onChange={(v) => update(review.id, { rating: v })} />
+              <button
+                onClick={() => remove(review.id)}
+                className="text-muted-foreground transition-colors hover:text-destructive"
+              >
+                <Trash2 className="size-4" />
+              </button>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Field label="Author name">
+                <Input
+                  value={review.author}
+                  onChange={(e) => update(review.id, { author: e.target.value })}
+                  placeholder="e.g. James W."
+                />
+              </Field>
+              <Field label="Location">
+                <Input
+                  value={review.location}
+                  onChange={(e) => update(review.id, { location: e.target.value })}
+                  placeholder="e.g. London, UK"
+                />
+              </Field>
+            </div>
+            <Field label="Review text">
+              <Textarea
+                value={review.text}
+                onChange={(e) => update(review.id, { text: e.target.value })}
+                rows={2}
+                placeholder="What did they say about us?"
+              />
+            </Field>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function StarPicker({ value, onChange }: { value: number; onChange: (v: number) => void }) {
+  return (
+    <div className="flex gap-0.5">
+      {[1, 2, 3, 4, 5].map((n) => (
+        <button
+          key={n}
+          type="button"
+          onClick={() => onChange(n)}
+          className={cn(
+            "text-xl leading-none transition-colors",
+            n <= value ? "text-yellow-400" : "text-muted-foreground/25 hover:text-yellow-400/50",
+          )}
+        >
+          ★
+        </button>
+      ))}
+    </div>
+  );
+}
+
+// ── Instagram ──────────────────────────────────────────────────────
+
+const DEFAULT_POST_HREF = "https://instagram.com/_cs_collections_";
+
+function InstagramEditor({
+  value,
+  onChange,
+}: {
+  value: CmsInstagramPost[];
+  onChange: (v: CmsInstagramPost[]) => void;
+}) {
+  const posts: CmsInstagramPost[] = Array.from({ length: 8 }, (_, i) =>
+    value[i] ?? { id: `ig${i + 1}`, image: null, href: DEFAULT_POST_HREF, likes: 0 },
+  );
+
+  function update(i: number, patch: Partial<CmsInstagramPost>) {
+    onChange(posts.map((p, idx) => (idx === i ? { ...p, ...patch } : p)));
+  }
+
+  return (
+    <div className="space-y-5 rounded-2xl border border-border bg-card p-6">
+      <div>
+        <h2 className="font-display text-lg font-semibold">Instagram Gallery</h2>
+        <p className="text-sm text-muted-foreground mt-1">
+          Manage the 8 posts in the homepage Instagram section. Upload screenshots or leave empty for
+          jersey placeholders.
+        </p>
+      </div>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {posts.map((post, i) => (
+          <PostUploader key={post.id} label={`Post ${i + 1}`} post={post} onUpdate={(p) => update(i, p)} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function PostUploader({
+  label,
+  post,
+  onUpdate,
+}: {
+  label: string;
+  post: CmsInstagramPost;
+  onUpdate: (p: Partial<CmsInstagramPost>) => void;
+}) {
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+
+  async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    const form = new FormData();
+    form.append("file", file);
+    const res = await fetch("/api/cms/upload", { method: "POST", body: form });
+    const json = await res.json();
+    setUploading(false);
+    if (json.url) onUpdate({ image: json.url });
+    if (fileRef.current) fileRef.current.value = "";
+  }
+
+  return (
+    <div className="space-y-2 rounded-xl border border-border p-3">
+      <p className="text-xs font-medium text-muted-foreground">{label}</p>
+
+      {post.image ? (
+        <div className="relative aspect-square overflow-hidden rounded-lg border border-border">
+          <img src={post.image} alt="" className="h-full w-full object-cover" />
+          <button
+            onClick={() => onUpdate({ image: null })}
+            className="absolute right-1.5 top-1.5 flex size-6 items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/80"
+          >
+            <X className="size-3" />
+          </button>
+        </div>
+      ) : (
+        <div
+          className="flex aspect-square cursor-pointer flex-col items-center justify-center gap-1.5 rounded-lg border-2 border-dashed border-border bg-muted/40 text-muted-foreground transition-colors hover:border-primary/50 hover:bg-muted/60"
+          onClick={() => fileRef.current?.click()}
+        >
+          {uploading ? (
+            <Loader2 className="size-4 animate-spin" />
+          ) : (
+            <>
+              <Upload className="size-4" />
+              <span className="text-[10px]">Upload image</span>
+            </>
+          )}
+        </div>
+      )}
+
+      <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleFile} />
+
+      <Field label="Instagram link">
+        <Input
+          value={post.href}
+          onChange={(e) => onUpdate({ href: e.target.value })}
+          placeholder="https://instagram.com/..."
+          className="h-8 text-xs"
+        />
+      </Field>
+      <Field label="Likes count">
+        <Input
+          type="number"
+          value={post.likes}
+          onChange={(e) => onUpdate({ likes: Number(e.target.value) })}
+          className="h-8 text-xs"
+          min={0}
+        />
+      </Field>
+
+      {post.image && (
+        <Button size="sm" variant="outline" className="w-full h-8 text-xs" onClick={() => fileRef.current?.click()}>
+          <Upload className="size-3" /> Replace image
+        </Button>
+      )}
+    </div>
+  );
+}
+
+// ── Shared UI helpers ──────────────────────────────────────────────
 
 function Field({
   label,

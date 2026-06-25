@@ -2,13 +2,14 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { Save, Loader2, ArrowLeft, Plus, Trash2, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils/cn";
-import type { Product, ProductBadge, JerseyKit, TeamType, SizeStock } from "@/types";
+import type { Product, ProductBadge, JerseyKit, TeamType } from "@/types";
 
 const SIZES = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
 const BADGES: ProductBadge[] = ["new", "bestseller", "limited", "retro", "sale"];
@@ -55,7 +56,9 @@ export default function ProductEditPage() {
 
   const [product, setProduct] = useState<Product | null>(isNew ? blankProduct() : null);
   const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [colorDraft, setColorDraft] = useState("#FF6200");
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -84,20 +87,36 @@ export default function ProductEditPage() {
 
   async function save() {
     if (!product) return;
+    if (!product.name.trim()) {
+      toast.error("Product name is required", { description: "Please fill in the name before saving." });
+      return;
+    }
     setSaving(true);
-    if (isNew) {
-      await fetch("/api/cms/products", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...product, slug: product.slug || slugify(product.name) }),
+    try {
+      const res = isNew
+        ? await fetch("/api/cms/products", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ...product, slug: product.slug || slugify(product.name) }),
+          })
+        : await fetch(`/api/cms/products/${id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(product),
+          });
+      if (!res.ok) throw new Error("Request failed");
+
+      setSaving(false);
+      setSaved(true);
+      toast.success(isNew ? "Product created" : "Changes saved", {
+        description: isNew
+          ? `${product.name} was added to your catalogue.`
+          : `${product.name} has been updated.`,
       });
-      router.push("/admin/products");
-    } else {
-      await fetch(`/api/cms/products/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(product),
-      });
+      // Briefly show "Saved!" on the button, then return to the listing.
+      setTimeout(() => router.push("/admin/products"), 700);
+    } catch {
+      toast.error("Couldn't save", { description: "Something went wrong. Please try again." });
       setSaving(false);
     }
   }
@@ -121,49 +140,70 @@ export default function ProductEditPage() {
             {isNew ? "New Product" : "Edit Product"}
           </h1>
         </div>
-        <Button onClick={save} disabled={saving} size="sm">
+        <Button onClick={save} disabled={saving || saved} size="sm">
           {saving ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}
-          {isNew ? "Create" : "Save changes"}
+          {saved ? "Saved!" : isNew ? "Create" : "Save changes"}
         </Button>
       </div>
+
+      {isNew && (
+        <div className="rounded-2xl border border-primary/30 bg-primary/5 p-5">
+          <h2 className="font-display text-base font-semibold">👋 Adding a new product — quick guide</h2>
+          <ol className="mt-2 list-decimal space-y-1 pl-5 text-sm text-muted-foreground">
+            <li>Fill in the <strong>Product name</strong> and <strong>Price</strong> — these are the only required fields (marked with a red *).</li>
+            <li>Add at least one <strong>photo</strong> in the Images box on the right (upload from your computer).</li>
+            <li>Set the <strong>stock</strong> for each size so customers can buy it.</li>
+            <li>Everything else is optional but helps customers — fill in what you can.</li>
+            <li>Press <strong>Create</strong> at the top-right when you&apos;re done.</li>
+          </ol>
+          <p className="mt-2 text-xs text-muted-foreground">
+            Tip: To save time, go back and use the <strong>Duplicate</strong> button on a similar
+            product instead — it copies everything so you only change what&apos;s different.
+          </p>
+        </div>
+      )}
 
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Main column */}
         <div className="space-y-5 lg:col-span-2">
           <Card title="Basic info">
             <div className="grid gap-4 sm:grid-cols-2">
-              <Field label="Product name" required>
-                <Input value={product.name} onChange={(e) => set("name", e.target.value)} />
+              <Field label="Product name" required hint="The full name shoppers see. Include team, season and kit.">
+                <Input
+                  value={product.name}
+                  onChange={(e) => set("name", e.target.value)}
+                  placeholder="e.g. Brazil 2024/25 Home Jersey"
+                />
               </Field>
-              <Field label="URL slug" hint="Auto-generated if empty">
+              <Field label="URL slug" hint="The web address for this product. Leave empty — it fills in automatically from the name.">
                 <Input
                   value={product.slug}
                   onChange={(e) => set("slug", e.target.value)}
                   placeholder={slugify(product.name) || "e.g. brazil-home-2425"}
                 />
               </Field>
-              <Field label="Brand">
-                <Input value={product.brand} onChange={(e) => set("brand", e.target.value)} placeholder="Nike, adidas…" />
+              <Field label="Brand" hint="Who makes the jersey.">
+                <Input value={product.brand} onChange={(e) => set("brand", e.target.value)} placeholder="e.g. Nike, adidas, Puma" />
               </Field>
-              <Field label="Season">
-                <Input value={product.season} onChange={(e) => set("season", e.target.value)} placeholder="2024/25" />
+              <Field label="Season" hint="Which season this kit is from.">
+                <Input value={product.season} onChange={(e) => set("season", e.target.value)} placeholder="e.g. 2024/25" />
               </Field>
-              <Field label="Team name">
-                <Input value={product.team} onChange={(e) => set("team", e.target.value)} />
+              <Field label="Team name" hint="The club or country this jersey belongs to.">
+                <Input value={product.team} onChange={(e) => set("team", e.target.value)} placeholder="e.g. Brazil" />
               </Field>
-              <Field label="Team ID">
-                <Input value={product.teamId} onChange={(e) => set("teamId", e.target.value)} />
+              <Field label="Team ID" hint="Short code that links to the team filter. If unsure, copy the team name in lowercase with dashes.">
+                <Input value={product.teamId} onChange={(e) => set("teamId", e.target.value)} placeholder="e.g. br, real-madrid" />
               </Field>
-              <Field label="League">
-                <Input value={product.league ?? ""} onChange={(e) => set("league", e.target.value)} />
+              <Field label="League" hint="Only for club jerseys. Leave empty for national teams.">
+                <Input value={product.league ?? ""} onChange={(e) => set("league", e.target.value)} placeholder="e.g. Premier League, LaLiga" />
               </Field>
-              <Field label="Confederation">
-                <Input value={product.confederation ?? ""} onChange={(e) => set("confederation", e.target.value)} />
+              <Field label="Confederation" hint="The governing body. Optional.">
+                <Input value={product.confederation ?? ""} onChange={(e) => set("confederation", e.target.value)} placeholder="e.g. UEFA, CONMEBOL" />
               </Field>
             </div>
 
             <div className="mt-4 grid gap-4 sm:grid-cols-3">
-              <Field label="Type">
+              <Field label="Type" hint="National team, club, or a retro/classic kit.">
                 <select
                   value={product.type}
                   onChange={(e) => set("type", e.target.value as TeamType)}
@@ -172,7 +212,7 @@ export default function ProductEditPage() {
                   {TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
                 </select>
               </Field>
-              <Field label="Kit">
+              <Field label="Kit" hint="Which version of the kit this is.">
                 <select
                   value={product.kit}
                   onChange={(e) => set("kit", e.target.value as JerseyKit)}
@@ -181,7 +221,7 @@ export default function ProductEditPage() {
                   {KITS.map((k) => <option key={k} value={k}>{k}</option>)}
                 </select>
               </Field>
-              <Field label="Category">
+              <Field label="Category" hint="Who the jersey is sized for.">
                 <select
                   value={product.category}
                   onChange={(e) => set("category", e.target.value)}
@@ -195,38 +235,46 @@ export default function ProductEditPage() {
 
           <Card title="Description">
             <div className="space-y-4">
-              <Field label="Short description">
+              <Field label="Short description" hint="One line shown under the product in lists.">
                 <Textarea
                   value={product.shortDescription}
                   onChange={(e) => set("shortDescription", e.target.value)}
                   rows={2}
+                  placeholder="e.g. Nike Stadium Home shirt — 2024/25 season."
                 />
               </Field>
-              <Field label="Full description">
+              <Field label="Full description" hint="The main paragraph on the product page. Describe the fabric, fit and any special details.">
                 <Textarea
                   value={product.description}
                   onChange={(e) => set("description", e.target.value)}
                   rows={4}
+                  placeholder="e.g. The official 2024/25 home jersey, made with sweat-wicking fabric and a tailored fit…"
                 />
               </Field>
-              <Field label="Team info">
+              <Field label="Team info" hint="A sentence about the team. Optional.">
                 <Textarea
                   value={product.teamInfo}
                   onChange={(e) => set("teamInfo", e.target.value)}
                   rows={2}
+                  placeholder="e.g. Brazil is the most successful nation in World Cup history."
                 />
               </Field>
-              <Field label="Season info">
+              <Field label="Season info" hint="A sentence about this season's kit. Optional.">
                 <Textarea
                   value={product.seasonInfo}
                   onChange={(e) => set("seasonInfo", e.target.value)}
                   rows={2}
+                  placeholder="e.g. Worn during the 2024/25 domestic and international campaign."
                 />
               </Field>
             </div>
           </Card>
 
           <Card title="Stock & sizes">
+            <p className="mb-3 text-xs text-muted-foreground">
+              Set how many units you have for each size. Set a size to 0 to show it as &ldquo;Sold
+              out&rdquo;, or remove it with the trash icon if you don&apos;t stock it at all.
+            </p>
             <div className="space-y-2">
               {product.sizes.map((s, i) => (
                 <div key={s.size} className="flex items-center gap-3">
@@ -272,15 +320,16 @@ export default function ProductEditPage() {
         <div className="space-y-5">
           <Card title="Pricing">
             <div className="space-y-4">
-              <Field label="Price (₹)" required>
+              <Field label="Price (₹)" required hint="Normal selling price. Numbers only — don't type the ₹ symbol.">
                 <Input
                   type="number"
                   min={0}
                   value={product.price}
                   onChange={(e) => set("price", Number(e.target.value))}
+                  placeholder="1100"
                 />
               </Field>
-              <Field label="Sale price (₹)" hint="Leave 0 for no sale">
+              <Field label="Sale price (₹)" hint="Discounted price, shown crossed-out next to the original. Leave empty if not on sale.">
                 <Input
                   type="number"
                   min={0}
@@ -288,12 +337,17 @@ export default function ProductEditPage() {
                   onChange={(e) =>
                     set("salePrice", e.target.value ? Number(e.target.value) : undefined)
                   }
+                  placeholder="e.g. 899"
                 />
               </Field>
             </div>
           </Card>
 
           <Card title="Images">
+            <p className="mb-3 text-xs text-muted-foreground">
+              The first image is the main photo customers see. Upload photos from your computer, or
+              paste an image link and press Enter.
+            </p>
             <div className="space-y-3">
               {product.images.map((url, i) => (
                 <div key={i} className="group relative overflow-hidden rounded-xl border border-border">
@@ -308,7 +362,7 @@ export default function ProductEditPage() {
                 </div>
               ))}
 
-              <Field label="Add image URL">
+              <Field label="Add image link (optional)" hint="Paste a web image address and press Enter, or use the upload button below.">
                 <div className="flex gap-2">
                   <Input
                     placeholder="https://…"
@@ -355,7 +409,7 @@ export default function ProductEditPage() {
 
           <Card title="Badges & flags">
             <div className="space-y-4">
-              <Field label="Badges">
+              <Field label="Badges" hint="Small coloured labels shown on the product (e.g. on a corner). Click to turn each on or off.">
                 <div className="flex flex-wrap gap-2">
                   {BADGES.map((b) => {
                     const on = product.badges.includes(b);
@@ -384,28 +438,38 @@ export default function ProductEditPage() {
                 </div>
               </Field>
 
-              <label className="flex items-center gap-2.5 cursor-pointer select-none">
-                <input
-                  type="checkbox"
-                  checked={product.isFeatured}
-                  onChange={(e) => set("isFeatured", e.target.checked)}
-                  className="size-4 accent-primary"
-                />
-                <span className="text-sm font-medium">Featured product</span>
-              </label>
-              <label className="flex items-center gap-2.5 cursor-pointer select-none">
-                <input
-                  type="checkbox"
-                  checked={product.isLimited}
-                  onChange={(e) => set("isLimited", e.target.checked)}
-                  className="size-4 accent-primary"
-                />
-                <span className="text-sm font-medium">Limited edition</span>
-              </label>
+              <div>
+                <label className="flex items-center gap-2.5 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={product.isFeatured}
+                    onChange={(e) => set("isFeatured", e.target.checked)}
+                    className="size-4 accent-primary"
+                  />
+                  <span className="text-sm font-medium">Featured product</span>
+                </label>
+                <p className="ml-[26px] mt-1 text-xs text-muted-foreground">Highlights it in featured spots around the store.</p>
+              </div>
+              <div>
+                <label className="flex items-center gap-2.5 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={product.isLimited}
+                    onChange={(e) => set("isLimited", e.target.checked)}
+                    className="size-4 accent-primary"
+                  />
+                  <span className="text-sm font-medium">Limited edition</span>
+                </label>
+                <p className="ml-[26px] mt-1 text-xs text-muted-foreground">Shows it in the homepage &ldquo;Limited Edition&rdquo; banner.</p>
+              </div>
             </div>
           </Card>
 
           <Card title="Colors">
+            <p className="mb-3 text-xs text-muted-foreground">
+              The kit&apos;s main colours. These power the generated jersey artwork when there&apos;s
+              no photo. Pick a colour to add it; click a circle to remove it.
+            </p>
             <div className="space-y-3">
               <div className="flex flex-wrap gap-2">
                 {product.colors.map((c, i) => (
@@ -420,17 +484,27 @@ export default function ProductEditPage() {
                   </button>
                 ))}
               </div>
-              <div className="flex gap-2">
+              <div className="flex items-center gap-2">
                 <Input
                   type="color"
+                  aria-label="Choose a colour"
                   className="h-9 w-12 cursor-pointer p-1"
-                  onChange={(e) => {
-                    if (!product.colors.includes(e.target.value)) {
-                      set("colors", [...product.colors, e.target.value]);
+                  value={colorDraft}
+                  onChange={(e) => setColorDraft(e.target.value)}
+                />
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    if (!product.colors.includes(colorDraft)) {
+                      set("colors", [...product.colors, colorDraft]);
                     }
                   }}
-                />
-                <span className="text-xs text-muted-foreground self-center">Pick colour to add</span>
+                >
+                  <Plus className="size-3.5" /> Add colour
+                </Button>
+                <span className="text-xs text-muted-foreground">Pick a colour, then press Add</span>
               </div>
             </div>
           </Card>

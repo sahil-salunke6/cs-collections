@@ -76,10 +76,142 @@
     "ctaHref": "/products?badge=limited"
   },
   "collections": [
-    { "slug": "national-teams", "title": "National Teams", "subtitle": "Represent your nation", "href": "/national-teams" },
-    { "slug": "club-teams", "title": "Club Teams", "subtitle": "Club colours, worldwide", "href": "/club-teams" },
-    { "slug": "retro", "title": "Retro Jerseys", "subtitle": "Heritage classics reissued", "href": "/retro" },
-    { "slug": "new-arrivals", "title": "New Arrivals", "subtitle": "Freshly dropped", "href": "/new-arrivals" }
+    {
+      "slug": "national-teams",
+      "title": "National Teams",
+      "subtitle": "Represent your nation",
+      "href": "/national-teams"
+    },
+    {
+      "slug": "club-teams",
+      "title": "Club Teams",
+      "subtitle": "Club colours, worldwide",
+      "href": "/club-teams"
+    },
+    {
+      "slug": "retro",
+      "title": "Retro Jerseys",
+      "subtitle": "Heritage classics reissued",
+      "href": "/retro"
+    },
+    {
+      "slug": "new-arrivals",
+      "title": "New Arrivals",
+      "subtitle": "Freshly dropped",
+      "href": "/new-arrivals"
+    }
+  ],
+  "featuredTeams": {
+    "national": [
+      "portugal",
+      "argentina",
+      "france",
+      "brazil",
+      "england",
+      "japan"
+    ],
+    "club": [
+      "paris-saint-germain",
+      "real-madrid",
+      "arsenal-f-c",
+      "manchester-city",
+      "barcelona",
+      "bayern-munich",
+      "liverpool"
+    ]
+  },
+  "customTeams": [
+    {
+      "id": "ct-1782337136397",
+      "slug": "japan",
+      "name": "Japan",
+      "type": "national",
+      "crest": "",
+      "primaryColor": "#1c3563",
+      "productCount": 0,
+      "featured": false
+    }
+  ],
+  "teamOverrides": {},
+  "reviews": [
+    {
+      "id": "r1",
+      "author": "James W.",
+      "location": "London, UK",
+      "rating": 5,
+      "text": "The quality is unreal — feels exactly like the on-pitch version. Shipping was lightning fast."
+    },
+    {
+      "id": "r2",
+      "author": "Camila S.",
+      "location": "São Paulo, BR",
+      "rating": 5,
+      "text": "My Brazil retro shirt is stunning. The detailing and fabric are top tier. Will buy again."
+    },
+    {
+      "id": "r3",
+      "author": "Tariq A.",
+      "location": "Dubai, UAE",
+      "rating": 5,
+      "text": "Best jersey store I've used. Authentic, beautifully packaged, and the fit guide was spot on."
+    },
+    {
+      "id": "r4",
+      "author": "Noah L.",
+      "location": "Berlin, DE",
+      "rating": 4,
+      "text": "Great selection of clubs and nations. The limited editions sell out fast — grab them quick!"
+    }
+  ],
+  "instagramPosts": [
+    {
+      "id": "ig1",
+      "image": null,
+      "href": "https://instagram.com/_cs_collections_",
+      "likes": 420
+    },
+    {
+      "id": "ig2",
+      "image": null,
+      "href": "https://instagram.com/_cs_collections_",
+      "likes": 557
+    },
+    {
+      "id": "ig3",
+      "image": null,
+      "href": "https://instagram.com/_cs_collections_",
+      "likes": 694
+    },
+    {
+      "id": "ig4",
+      "image": null,
+      "href": "https://instagram.com/_cs_collections_",
+      "likes": 831
+    },
+    {
+      "id": "ig5",
+      "image": null,
+      "href": "https://instagram.com/_cs_collections_",
+      "likes": 968
+    },
+    {
+      "id": "ig6",
+      "image": null,
+      "href": "https://instagram.com/_cs_collections_",
+      "likes": 1105
+    },
+    {
+      "id": "ig7",
+      "image": null,
+      "href": "https://instagram.com/_cs_collections_",
+      "likes": 1242
+    },
+    {
+      "id": "ig8",
+      "image": null,
+      "href": "https://instagram.com/_cs_collections_",
+      "likes": 1379
+    }
   ],
   "productOverrides": {
     "p001": {
@@ -151,5 +283,73 @@
       "createdAt": "2026-06-14T18:30:00.000Z"
     }
   },
-  "newProducts": []
+  "newProducts": [
+    {
+      "id": "new-1782334351115",
+      "slug": "",
+      "name": "Japan 2026 Home Jersey",
+      "team": "Japan",
+      "teamId": "jpn",
+      "type": "national",
+      "kit": "home",
+      "season": "2026",
+      "brand": "Adidas",
+      "category": "Mens",
+      "confederation": "AFC",
+      "price": 1100,
+      "currency": "INR",
+      "images": [
+        "front",
+        "back",
+        "detail"
+      ],
+      "video": "showcase",
+      "sizes": [
+        {
+          "size": "S",
+          "stock": 10
+        },
+        {
+          "size": "M",
+          "stock": 24
+        },
+        {
+          "size": "L",
+          "stock": 24
+        },
+        {
+          "size": "XL",
+          "stock": 20
+        },
+        {
+          "size": "XXL",
+          "stock": 6
+        }
+      ],
+      "colors": [
+        "#000555",
+        "#eaf5fb",
+        "#ce0303"
+      ],
+      "rating": 4.8,
+      "reviewCount": 373,
+      "tags": [
+        "Brazil",
+        "Nike",
+        "Home",
+        "2024/25",
+        "national"
+      ],
+      "badges": [
+        "bestseller"
+      ],
+      "shortDescription": "Adidas Stadium Home shirt — 2026 World Cup season.",
+      "description": "The official Japan 2026 Home Kit by Adidas. Engineered with sweat-wicking Climacool technology for a cool, dry performance, finished with the national team crest, manufacturer mark, and an \"Away-From-Home/Beyond the Horizon\" inspired design. Built for matchday and everyday wear.",
+      "teamInfo": "Japan competes in AFC (Asian Football Confederation). Recognized worldwide for a distinct identity, the nation's Samurai Blue colours are a global symbol of the game.",
+      "seasonInfo": "Part of the 2026/27 on-pitch collection, worn by the first team in the AFC Asian Qualifiers and the FIFA World Cup 2026.",
+      "isFeatured": false,
+      "isLimited": false,
+      "createdAt": "2026-06-24T20:52:31.115Z"
+    }
+  ]
 }
