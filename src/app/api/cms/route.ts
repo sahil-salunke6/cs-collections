@@ -19,6 +19,7 @@ export async function PUT(req: Request) {
       featuredTeams: body.featuredTeams ?? current.featuredTeams,
       customTeams: body.customTeams ?? current.customTeams,
       teamOverrides: body.teamOverrides ?? current.teamOverrides,
+      removedTeamIds: body.removedTeamIds ?? current.removedTeamIds,
       reviews: body.reviews ?? current.reviews,
       instagramPosts: body.instagramPosts ?? current.instagramPosts,
     };

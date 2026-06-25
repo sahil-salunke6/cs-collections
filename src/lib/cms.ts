@@ -82,6 +82,7 @@ export interface CmsData {
   featuredTeams: CmsFeaturedTeams;
   customTeams: Team[];
   teamOverrides: Record<string, Partial<Team>>;
+  removedTeamIds: string[];
   reviews: CmsReview[];
   instagramPosts: CmsInstagramPost[];
   productOverrides: Record<string, Partial<Product>>;
@@ -135,6 +136,7 @@ const DEFAULT: CmsData = {
   },
   customTeams: [],
   teamOverrides: {},
+  removedTeamIds: [],
   reviews: [
     { id: "r1", author: "James W.", location: "London, UK", rating: 5, text: "The quality is unreal — feels exactly like the on-pitch version. Shipping was lightning fast." },
     { id: "r2", author: "Camila S.", location: "São Paulo, BR", rating: 5, text: "My Brazil retro shirt is stunning. The detailing and fabric are top tier. Will buy again." },
@@ -186,8 +188,9 @@ export function getCmsProductCatalog(base: Product[]): Product[] {
 /** Returns base teams (with any CMS overrides applied) merged with admin-created custom teams. */
 export function getCmsTeamCatalog(base: Team[]): Team[] {
   const cms = getCmsData();
-  const merged = base.map((t) =>
-    cms.teamOverrides[t.id] ? { ...t, ...cms.teamOverrides[t.id] } : t,
-  );
+  const removed = new Set(cms.removedTeamIds ?? []);
+  const merged = base
+    .filter((t) => !removed.has(t.id))
+    .map((t) => (cms.teamOverrides[t.id] ? { ...t, ...cms.teamOverrides[t.id] } : t));
   return [...merged, ...cms.customTeams];
 }

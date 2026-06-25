@@ -126,13 +126,33 @@
       "slug": "japan",
       "name": "Japan",
       "type": "national",
-      "crest": "",
+      "crest": "/uploads/1782414717307-iuu3hh0qswd.png",
       "primaryColor": "#1c3563",
       "productCount": 0,
       "featured": false
     }
   ],
-  "teamOverrides": {},
+  "teamOverrides": {
+    "br": {
+      "crest": "/uploads/1782415511414-adkhviwlfp.png"
+    },
+    "ar": {
+      "crest": "/uploads/1782415515059-7d5fhi58c6p.png"
+    },
+    "fr": {
+      "crest": "/uploads/1782415523945-6ute8m1h8k.png"
+    },
+    "en": {
+      "crest": "/uploads/1782415529657-imsitdurp7p.png"
+    },
+    "pt": {
+      "crest": "/uploads/1782415536129-5k3tezaektn.png"
+    },
+    "psg": {
+      "crest": "/uploads/1782418190724-w7p5kpagecf.png"
+    }
+  },
+  "removedTeamIds": [],
   "reviews": [
     {
       "id": "r1",

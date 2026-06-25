@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { ChevronDown, ChevronUp, ImagePlus, Loader2, Plus, Save, Trash2, Upload, X } from "lucide-react";
+import { ChevronDown, ChevronUp, ImagePlus, Loader2, Pencil, Plus, RotateCcw, Save, Trash2, Upload, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -68,6 +68,7 @@ export default function AdminContentPage() {
           featuredTeams: data.featuredTeams,
           customTeams: data.customTeams,
           teamOverrides: data.teamOverrides,
+          removedTeamIds: data.removedTeamIds,
           reviews: data.reviews,
           instagramPosts: data.instagramPosts,
         }),
@@ -168,6 +169,8 @@ export default function AdminContentPage() {
           onCustomTeamsChange={(v) => setData((d) => (d ? { ...d, customTeams: v } : d))}
           teamOverrides={data.teamOverrides ?? {}}
           onTeamOverridesChange={(v) => setData((d) => (d ? { ...d, teamOverrides: v } : d))}
+          removedTeamIds={data.removedTeamIds ?? []}
+          onRemovedTeamIdsChange={(v) => setData((d) => (d ? { ...d, removedTeamIds: v } : d))}
         />
       )}
       {tab === "reviews" && (
@@ -646,6 +649,8 @@ function FeaturedTeamsEditor({
   onCustomTeamsChange,
   teamOverrides,
   onTeamOverridesChange,
+  removedTeamIds,
+  onRemovedTeamIdsChange,
 }: {
   value: CmsFeaturedTeams;
   onChange: (v: CmsFeaturedTeams) => void;
@@ -653,14 +658,21 @@ function FeaturedTeamsEditor({
   onCustomTeamsChange: (v: Team[]) => void;
   teamOverrides: Record<string, Partial<Team>>;
   onTeamOverridesChange: (v: Record<string, Partial<Team>>) => void;
+  removedTeamIds: string[];
+  onRemovedTeamIdsChange: (v: string[]) => void;
 }) {
-  // Base teams with admin overrides applied, then custom teams.
-  const baseWithOverrides = BASE_TEAMS.map((t) =>
+  // Which team's inline editor is currently open (by id).
+  const [editingId, setEditingId] = useState<string | null>(null);
+
+  // Base teams (minus any removed) with admin overrides applied, then custom teams.
+  const removedSet = new Set(removedTeamIds);
+  const baseWithOverrides = BASE_TEAMS.filter((t) => !removedSet.has(t.id)).map((t) =>
     teamOverrides[t.id] ? { ...t, ...teamOverrides[t.id] } : t,
   );
   const allTeams = [...baseWithOverrides, ...customTeams];
   const customIds = new Set(customTeams.map((t) => t.id));
-  const customSlugs = new Set(customTeams.map((t) => t.slug));
+  const overriddenIds = new Set(Object.keys(teamOverrides));
+  const removedBaseTeams = BASE_TEAMS.filter((t) => removedSet.has(t.id));
 
   function toggle(type: "national" | "club", slug: string, add: boolean) {
     if (add) onChange({ ...value, [type]: [...value[type], slug] });
@@ -682,15 +694,6 @@ function FeaturedTeamsEditor({
     onCustomTeamsChange([...customTeams, team]);
     // Auto-feature the new team in its section so it shows up immediately.
     onChange({ ...value, [team.type]: [...value[team.type as "national" | "club"], team.slug] });
-  }
-
-  function deleteCustomTeam(slug: string) {
-    if (!confirm("Delete this custom team? It will be removed from the homepage.")) return;
-    onCustomTeamsChange(customTeams.filter((t) => t.slug !== slug));
-    onChange({
-      national: value.national.filter((s) => s !== slug),
-      club: value.club.filter((s) => s !== slug),
-    });
   }
 
   // Edit any team — custom teams are updated in place; base teams get an override entry.
@@ -723,6 +726,66 @@ function FeaturedTeamsEditor({
     onTeamOverridesChange(next);
   }
 
+  // Remove a team entirely — custom teams are deleted; built-in teams are hidden
+  // (and can be restored later). Either way it leaves the featured lists.
+  function deleteTeam(team: Team) {
+    if (!confirm(`Remove "${team.name}"? It will be taken off the homepage and team lists.`)) return;
+    if (customIds.has(team.id)) {
+      onCustomTeamsChange(customTeams.filter((t) => t.id !== team.id));
+    } else {
+      onRemovedTeamIdsChange([...removedTeamIds, team.id]);
+      if (teamOverrides[team.id]) resetTeam(team.id);
+    }
+    onChange({
+      national: value.national.filter((s) => s !== team.slug),
+      club: value.club.filter((s) => s !== team.slug),
+    });
+    if (editingId === team.id) setEditingId(null);
+  }
+
+  function restoreTeam(id: string) {
+    onRemovedTeamIdsChange(removedTeamIds.filter((x) => x !== id));
+  }
+
+  // Shared action buttons (Edit + Delete) shown on every team row.
+  function rowActions(team: Team) {
+    return (
+      <>
+        <button
+          onClick={() => setEditingId((cur) => (cur === team.id ? null : team.id))}
+          className={cn(
+            "transition-colors",
+            editingId === team.id ? "text-primary" : "text-muted-foreground hover:text-foreground",
+          )}
+          title="Edit team"
+        >
+          <Pencil className="size-3.5" />
+        </button>
+        <button
+          onClick={() => deleteTeam(team)}
+          className="text-muted-foreground transition-colors hover:text-destructive"
+          title="Remove team"
+        >
+          <Trash2 className="size-3.5" />
+        </button>
+      </>
+    );
+  }
+
+  function renderEditor(team: Team) {
+    if (editingId !== team.id) return null;
+    return (
+      <TeamEditForm
+        team={team}
+        isCustom={customIds.has(team.id)}
+        isOverridden={overriddenIds.has(team.id)}
+        onUpdate={(patch) => updateTeam(team, patch)}
+        onReset={() => resetTeam(team.id)}
+        onClose={() => setEditingId(null)}
+      />
+    );
+  }
+
   function renderSection(type: "national" | "club", sectionLabel: string) {
     const teamsOfType = allTeams.filter((t) => t.type === type);
     const featured = value[type] ?? [];
@@ -748,38 +811,41 @@ function FeaturedTeamsEditor({
           )}
           <div className="space-y-2">
             {featuredList.map((team, i) => (
-              <div
-                key={team.slug}
-                className="flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-2"
-              >
-                <TeamBadgeDot team={team} />
-                <span className="flex-1 text-sm font-medium">{team.name}</span>
-                {customSlugs.has(team.slug) && (
-                  <Badge variant="accent" className="text-[10px]">Custom</Badge>
-                )}
-                <button
-                  onClick={() => move(type, orderedSlugs, i, -1)}
-                  disabled={i === 0}
-                  className="text-muted-foreground transition-colors hover:text-foreground disabled:opacity-25"
-                  title="Move up"
-                >
-                  <ChevronUp className="size-4" />
-                </button>
-                <button
-                  onClick={() => move(type, orderedSlugs, i, 1)}
-                  disabled={i === featuredList.length - 1}
-                  className="text-muted-foreground transition-colors hover:text-foreground disabled:opacity-25"
-                  title="Move down"
-                >
-                  <ChevronDown className="size-4" />
-                </button>
-                <button
-                  onClick={() => toggle(type, team.slug, false)}
-                  className="ml-1 text-muted-foreground transition-colors hover:text-destructive"
-                  title="Remove from homepage"
-                >
-                  <X className="size-4" />
-                </button>
+              <div key={team.slug}>
+                <div className="flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-2">
+                  <TeamBadgeDot team={team} />
+                  <span className="flex-1 truncate text-sm font-medium">{team.name}</span>
+                  {customIds.has(team.id) ? (
+                    <Badge variant="accent" className="text-[10px]">Custom</Badge>
+                  ) : overriddenIds.has(team.id) ? (
+                    <Badge variant="muted" className="text-[10px]">Edited</Badge>
+                  ) : null}
+                  <button
+                    onClick={() => move(type, orderedSlugs, i, -1)}
+                    disabled={i === 0}
+                    className="text-muted-foreground transition-colors hover:text-foreground disabled:opacity-25"
+                    title="Move up"
+                  >
+                    <ChevronUp className="size-4" />
+                  </button>
+                  <button
+                    onClick={() => move(type, orderedSlugs, i, 1)}
+                    disabled={i === featuredList.length - 1}
+                    className="text-muted-foreground transition-colors hover:text-foreground disabled:opacity-25"
+                    title="Move down"
+                  >
+                    <ChevronDown className="size-4" />
+                  </button>
+                  <button
+                    onClick={() => toggle(type, team.slug, false)}
+                    className="text-muted-foreground transition-colors hover:text-warning"
+                    title="Remove from homepage"
+                  >
+                    <X className="size-4" />
+                  </button>
+                  {rowActions(team)}
+                </div>
+                {renderEditor(team)}
               </div>
             ))}
           </div>
@@ -792,29 +858,26 @@ function FeaturedTeamsEditor({
             </p>
             <div className="space-y-2">
               {available.map((team) => (
-                <div
-                  key={team.slug}
-                  className="flex items-center gap-2 rounded-lg border border-dashed border-border px-3 py-2"
-                >
-                  <TeamBadgeDot team={team} />
-                  <span className="flex-1 text-sm text-muted-foreground">{team.name}</span>
-                  {customSlugs.has(team.slug) && (
-                    <button
-                      onClick={() => deleteCustomTeam(team.slug)}
-                      className="text-muted-foreground transition-colors hover:text-destructive"
-                      title="Delete custom team"
+                <div key={team.slug}>
+                  <div className="flex items-center gap-2 rounded-lg border border-dashed border-border px-3 py-2">
+                    <TeamBadgeDot team={team} />
+                    <span className="flex-1 truncate text-sm text-muted-foreground">{team.name}</span>
+                    {customIds.has(team.id) ? (
+                      <Badge variant="accent" className="text-[10px]">Custom</Badge>
+                    ) : overriddenIds.has(team.id) ? (
+                      <Badge variant="muted" className="text-[10px]">Edited</Badge>
+                    ) : null}
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => toggle(type, team.slug, true)}
+                      className="h-7 text-xs"
                     >
-                      <Trash2 className="size-3.5" />
-                    </button>
-                  )}
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => toggle(type, team.slug, true)}
-                    className="h-7 text-xs"
-                  >
-                    <Plus className="size-3" /> Add
-                  </Button>
+                      <Plus className="size-3" /> Add
+                    </Button>
+                    {rowActions(team)}
+                  </div>
+                  {renderEditor(team)}
                 </div>
               ))}
             </div>
@@ -829,100 +892,55 @@ function FeaturedTeamsEditor({
       <div>
         <h2 className="font-display text-lg font-semibold">Featured Teams</h2>
         <p className="text-sm text-muted-foreground mt-1">
-          Choose which teams appear in the homepage team sections, control their order, and create
-          your own teams with custom badges.
+          Choose which teams appear on the homepage and control their order. Use the pencil to edit
+          any team, and the bin to remove it. Add your own teams with custom badges.
         </p>
       </div>
 
       <AddTeamForm existingSlugs={new Set(allTeams.map((t) => t.slug))} onAdd={addCustomTeam} />
 
-      <ManageTeamsPanel
-        teams={allTeams}
-        customIds={customIds}
-        overriddenIds={new Set(Object.keys(teamOverrides))}
-        onUpdate={updateTeam}
-        onReset={resetTeam}
-        onDelete={(team) => deleteCustomTeam(team.slug)}
-      />
-
       <div className="grid gap-8 lg:grid-cols-2">
         {renderSection("national", "National Teams")}
         {renderSection("club", "Club Teams")}
       </div>
-    </div>
-  );
-}
 
-function ManageTeamsPanel({
-  teams,
-  customIds,
-  overriddenIds,
-  onUpdate,
-  onReset,
-  onDelete,
-}: {
-  teams: Team[];
-  customIds: Set<string>;
-  overriddenIds: Set<string>;
-  onUpdate: (team: Team, patch: Partial<Team>) => void;
-  onReset: (id: string) => void;
-  onDelete: (team: Team) => void;
-}) {
-  const [open, setOpen] = useState(false);
-  const customCount = teams.filter((t) => customIds.has(t.id)).length;
-
-  return (
-    <div className="rounded-xl border border-border">
-      <button
-        onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-center justify-between px-4 py-3 text-left"
-      >
-        <span className="text-sm font-semibold">
-          Manage all teams
-          <span className="ml-2 font-normal text-muted-foreground">
-            ({teams.length} total · {customCount} custom)
-          </span>
-        </span>
-        {open ? <ChevronUp className="size-4" /> : <ChevronDown className="size-4" />}
-      </button>
-
-      {open && (
-        <div className="space-y-2 border-t border-border p-4">
-          <p className="text-xs text-muted-foreground">
-            Edit any team&apos;s name, badge, category or colour. Built-in teams can be reset to their
-            original; teams you created can be deleted.
+      {removedBaseTeams.length > 0 && (
+        <div className="rounded-xl border border-dashed border-border p-4">
+          <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+            Removed built-in teams ({removedBaseTeams.length})
           </p>
-          {teams.map((team) => (
-            <TeamRow
-              key={team.id}
-              team={team}
-              isCustom={customIds.has(team.id)}
-              isOverridden={overriddenIds.has(team.id)}
-              onUpdate={(patch) => onUpdate(team, patch)}
-              onReset={() => onReset(team.id)}
-              onDelete={() => onDelete(team)}
-            />
-          ))}
+          <div className="flex flex-wrap gap-2">
+            {removedBaseTeams.map((team) => (
+              <button
+                key={team.id}
+                onClick={() => restoreTeam(team.id)}
+                className="flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
+                title="Restore this team"
+              >
+                <RotateCcw className="size-3" /> {team.name}
+              </button>
+            ))}
+          </div>
         </div>
       )}
     </div>
   );
 }
 
-function TeamRow({
+function TeamEditForm({
   team,
   isCustom,
   isOverridden,
   onUpdate,
   onReset,
-  onDelete,
+  onClose,
 }: {
   team: Team;
   isCustom: boolean;
   isOverridden: boolean;
   onUpdate: (patch: Partial<Team>) => void;
   onReset: () => void;
-  onDelete: () => void;
+  onClose: () => void;
 }) {
   const fileRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
@@ -941,7 +959,7 @@ function TeamRow({
   }
 
   return (
-    <div className="flex flex-wrap items-end gap-3 rounded-lg border border-border bg-background p-3">
+    <div className="mt-1.5 flex flex-wrap items-end gap-3 rounded-lg border border-primary/30 bg-muted/30 p-3">
       {/* Badge */}
       <div className="space-y-1.5">
         <label className="text-[11px] font-medium text-muted-foreground">Badge</label>
@@ -970,14 +988,7 @@ function TeamRow({
       </div>
 
       <div className="min-w-[140px] flex-1 space-y-1.5">
-        <label className="flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground">
-          Name
-          {isCustom ? (
-            <Badge variant="accent" className="text-[9px]">Custom</Badge>
-          ) : isOverridden ? (
-            <Badge variant="muted" className="text-[9px]">Edited</Badge>
-          ) : null}
-        </label>
+        <label className="text-[11px] font-medium text-muted-foreground">Name</label>
         <Input value={team.name} onChange={(e) => onUpdate({ name: e.target.value })} />
       </div>
 
@@ -1003,26 +1014,23 @@ function TeamRow({
         />
       </div>
 
-      {isCustom ? (
-        <button
-          onClick={onDelete}
-          className="mb-1 text-muted-foreground transition-colors hover:text-destructive"
-          title="Delete team"
-        >
-          <Trash2 className="size-4" />
-        </button>
-      ) : (
-        <Button
-          size="sm"
-          variant="ghost"
-          className="mb-0.5 h-8 text-xs"
-          disabled={!isOverridden}
-          onClick={onReset}
-          title={isOverridden ? "Reset to original" : "No changes to reset"}
-        >
-          Reset
+      <div className="flex items-center gap-2">
+        {!isCustom && (
+          <Button
+            size="sm"
+            variant="ghost"
+            className="h-9 text-xs"
+            disabled={!isOverridden}
+            onClick={onReset}
+            title={isOverridden ? "Reset to original" : "No changes to reset"}
+          >
+            Reset
+          </Button>
+        )}
+        <Button size="sm" className="h-9 text-xs" onClick={onClose}>
+          Done
         </Button>
-      )}
+      </div>
     </div>
   );
 }
