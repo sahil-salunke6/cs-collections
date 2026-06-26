@@ -19,8 +19,8 @@
         "label": "Authentic"
       },
       {
-        "value": "90+",
-        "label": "Countries shipped"
+        "value": "Pan-India",
+        "label": "Fast delivery"
       },
       {
         "value": "4.9★",
@@ -30,7 +30,7 @@
   },
   "heroTiles": [
     {
-      "image": "/uploads/1782324910751-nj8mszhl14n.jpg",
+      "image": "/uploads/1782423007183-1327zm3j25cg.png",
       "colors": [
         "#FCE000",
         "#009C3B",
@@ -39,7 +39,7 @@
       "view": "front"
     },
     {
-      "image": "/uploads/1782324915530-21su0f92r6p.jpg",
+      "image": "/uploads/1782423027439-9tuoxrf0ij.png",
       "colors": [
         "#FFFFFF",
         "#FEBE10",
@@ -50,7 +50,7 @@
       "number": 7
     },
     {
-      "image": "/uploads/1782324920511-exkh4ru88b.jpg",
+      "image": "/uploads/1782423041093-zc7s4re094s.png",
       "colors": [
         "#A50044",
         "#004D98",
@@ -59,7 +59,7 @@
       "view": "front"
     },
     {
-      "image": "/uploads/1782324932282-op5c1tcndlo.jpg",
+      "image": "/uploads/1782423045430-uedydlc6aim.png",
       "colors": [
         "#6CABDD",
         "#FFFFFF",
@@ -113,10 +113,9 @@
     "club": [
       "paris-saint-germain",
       "real-madrid",
-      "arsenal-f-c",
+      "bayern-munich",
       "manchester-city",
       "barcelona",
-      "bayern-munich",
       "liverpool"
     ]
   },
@@ -150,6 +149,12 @@
     },
     "psg": {
       "crest": "/uploads/1782418190724-w7p5kpagecf.png"
+    },
+    "rma": {
+      "crest": "/uploads/1782423114700-uvthg2eyqpi.png"
+    },
+    "fcb-de": {
+      "crest": "/uploads/1782470487994-dxjb2p4g10j.png"
     }
   },
   "removedTeamIds": [],
@@ -187,8 +192,8 @@
     {
       "id": "ig1",
       "image": null,
-      "href": "https://instagram.com/_cs_collections_",
-      "likes": 420
+      "href": "https://www.instagram.com/reel/DZnXax1tgP8/?igsh=MWhla2dxZ3BoZDhxdg==",
+      "likes": 0
     },
     {
       "id": "ig2",
@@ -301,6 +306,70 @@
       "isFeatured": true,
       "isLimited": false,
       "createdAt": "2026-06-14T18:30:00.000Z"
+    },
+    "p002": {
+      "id": "p002",
+      "slug": "brazil-2024-25-away",
+      "name": "Brazil 2024/25 Away Jersey",
+      "team": "Brazil",
+      "teamId": "br",
+      "type": "national",
+      "kit": "away",
+      "season": "2024/25",
+      "brand": "Nike",
+      "category": "Mens",
+      "confederation": "CONMEBOL",
+      "price": 1100,
+      "currency": "INR",
+      "images": [
+        "front",
+        "back",
+        "detail"
+      ],
+      "sizes": [
+        {
+          "size": "S",
+          "stock": 16
+        },
+        {
+          "size": "M",
+          "stock": 31
+        },
+        {
+          "size": "L",
+          "stock": 16
+        },
+        {
+          "size": "XL",
+          "stock": 32
+        },
+        {
+          "size": "XXL",
+          "stock": 0
+        }
+      ],
+      "colors": [
+        "#009C3B",
+        "#FCE000",
+        "#002776"
+      ],
+      "rating": 4.2,
+      "reviewCount": 66,
+      "tags": [
+        "Brazil",
+        "Nike",
+        "Away",
+        "2024/25",
+        "national"
+      ],
+      "badges": [],
+      "shortDescription": "Nike Stadium Away shirt — 2024/25 season.",
+      "description": "The official Brazil 2024/25 away jersey by Nike. Engineered with sweat-wicking performance fabric and a tailored athletic fit, finished with the club crest, manufacturer mark and authentic detailing. Built for matchday and everyday wear.",
+      "teamInfo": "Brazil competes in CONMEBOL. Recognised worldwide for an iconic identity, the club/nation colours are a global symbol of the game.",
+      "seasonInfo": "Part of the 2024/25 on-pitch collection, worn by the first team in domestic and international competition.",
+      "isFeatured": false,
+      "isLimited": false,
+      "createdAt": "2026-06-05T18:30:00.000Z"
     }
   },
   "newProducts": [

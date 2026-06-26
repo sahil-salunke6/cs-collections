@@ -10,14 +10,14 @@ export const metadata: Metadata = { title: "About Us" };
 
 const VALUES = [
   { icon: ShieldCheck, title: "Authenticity first", body: "Every jersey is 100% genuine, sourced through official channels. No replicas, ever." },
-  { icon: Globe2, title: "Global passion", body: "From São Paulo to Seoul, we ship football culture to fans in over 90 countries." },
+  { icon: Globe2, title: "Pan-India passion", body: "From Mumbai to Guwahati, we deliver football culture to fans across every corner of India." },
   { icon: Heart, title: "Fan-obsessed", body: "Built by supporters, for supporters. Your matchday matters to us." },
   { icon: Sparkles, title: "Premium experience", body: "Considered design, fast delivery and care in every detail of the journey." },
 ];
 
 const STATS = [
   { k: "2018", v: "Founded" },
-  { k: "90+", v: "Countries" },
+  { k: "28+", v: "States served" },
   { k: "250k+", v: "Jerseys shipped" },
   { k: "4.9★", v: "Avg. rating" },
 ];
@@ -81,7 +81,7 @@ export default function AboutPage() {
       <Section>
         <div className="overflow-hidden rounded-3xl brand-gradient px-6 py-14 text-center text-white sm:px-12">
           <h2 className="font-display text-3xl font-bold sm:text-4xl">Ready to find your kit?</h2>
-          <p className="mx-auto mt-3 max-w-md text-white/80">Join thousands of fans worldwide and wear your colours with pride.</p>
+          <p className="mx-auto mt-3 max-w-md text-white/80">Join thousands of fans across India and wear your colours with pride.</p>
           <Button asChild size="xl" variant="accent" className="mt-6">
             <Link href="/new-arrivals">Shop New Arrivals</Link>
           </Button>

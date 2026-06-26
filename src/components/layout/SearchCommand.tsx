@@ -26,7 +26,7 @@ export function SearchCommand({ open, onOpenChange }: { open: boolean; onOpenCha
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="top-24 max-w-2xl translate-y-0 gap-0 p-0">
         <DialogTitle className="sr-only">Search products</DialogTitle>
-        <div className="flex items-center gap-3 border-b border-border px-4">
+        <div className="flex items-center gap-3 border-b border-border pl-4 pr-14">
           <Search className="size-5 text-muted-foreground" />
           <input
             autoFocus
@@ -40,8 +40,13 @@ export function SearchCommand({ open, onOpenChange }: { open: boolean; onOpenCha
           />
           {isFetching && <Loader2 className="size-4 animate-spin text-muted-foreground" />}
           {q && (
-            <button onClick={() => setQ("")} aria-label="Clear">
-              <X className="size-4 text-muted-foreground" />
+            <button
+              onClick={() => setQ("")}
+              aria-label="Clear search"
+              className="flex h-7 items-center gap-1 rounded-full bg-secondary pl-2.5 pr-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            >
+              Clear
+              <X className="size-3.5" />
             </button>
           )}
         </div>

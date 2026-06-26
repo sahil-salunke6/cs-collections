@@ -3,6 +3,7 @@ import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
 import { join } from "path";
 import { revalidatePath } from "next/cache";
 import type { Product, Team } from "@/types";
+import { products as baseProducts } from "@/data/products";
 
 const CMS_PATH = join(process.cwd(), "src", "data", "cms.json");
 export const UPLOADS_DIR = join(process.cwd(), "public", "uploads");
@@ -107,7 +108,7 @@ const DEFAULT: CmsData = {
     cta2Href: "/retro",
     stats: [
       { value: "100%", label: "Authentic" },
-      { value: "90+", label: "Countries shipped" },
+      { value: "Pan-India", label: "Fast delivery" },
       { value: "4.9★", label: "Customer rating" },
     ],
   },
@@ -193,4 +194,62 @@ export function getCmsTeamCatalog(base: Team[]): Team[] {
     .filter((t) => !removed.has(t.id))
     .map((t) => (cms.teamOverrides[t.id] ? { ...t, ...cms.teamOverrides[t.id] } : t));
   return [...merged, ...cms.customTeams];
+}
+
+/** A single product from the live catalog (base + overrides + new), by slug. */
+export function getCmsProductBySlug(slug: string): Product | null {
+  return getCmsProductCatalog(baseProducts).find((p) => p.slug === slug) ?? null;
+}
+
+export interface StockLine {
+  productId: string;
+  size: string;
+  quantity: number;
+}
+
+/**
+ * Reduces stock for the given order lines and persists the change.
+ * Base products are updated via productOverrides (a full sizes array); admin-created
+ * products are updated in place. Returns the lines that could not be fully fulfilled.
+ */
+export function decrementStock(lines: StockLine[]): void {
+  if (!lines?.length) return;
+  const cms = getCmsData();
+
+  // Group requested quantities by product → size.
+  const byProduct = new Map<string, Map<string, number>>();
+  for (const line of lines) {
+    if (!line?.productId || !line?.size || !line?.quantity) continue;
+    const sizes = byProduct.get(line.productId) ?? new Map<string, number>();
+    sizes.set(line.size, (sizes.get(line.size) ?? 0) + line.quantity);
+    byProduct.set(line.productId, sizes);
+  }
+
+  const productOverrides = { ...cms.productOverrides };
+  let newProducts = cms.newProducts;
+
+  for (const [productId, sizeQty] of byProduct) {
+    const newIdx = cms.newProducts.findIndex((p) => p.id === productId);
+    if (newIdx >= 0) {
+      const p = cms.newProducts[newIdx];
+      const sizes = p.sizes.map((s) =>
+        sizeQty.has(s.size) ? { ...s, stock: Math.max(0, s.stock - sizeQty.get(s.size)!) } : s,
+      );
+      newProducts = newProducts.map((np, i) => (i === newIdx ? { ...np, sizes } : np));
+    } else {
+      const base = baseProducts.find((p) => p.id === productId);
+      const current = base
+        ? productOverrides[productId]
+          ? { ...base, ...productOverrides[productId] }
+          : base
+        : null;
+      if (!current?.sizes) continue;
+      const sizes = current.sizes.map((s) =>
+        sizeQty.has(s.size) ? { ...s, stock: Math.max(0, s.stock - sizeQty.get(s.size)!) } : s,
+      );
+      productOverrides[productId] = { ...(productOverrides[productId] ?? {}), sizes };
+    }
+  }
+
+  saveCmsData({ ...cms, productOverrides, newProducts });
 }

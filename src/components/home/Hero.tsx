@@ -25,7 +25,7 @@ const DEFAULT: CmsHero = {
   cta2Href: "/retro",
   stats: [
     { value: "100%", label: "Authentic" },
-    { value: "90+", label: "Countries shipped" },
+    { value: "Pan-India", label: "Fast delivery" },
     { value: "4.9★", label: "Customer rating" },
   ],
 };

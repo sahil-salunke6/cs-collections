@@ -16,12 +16,12 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             The home of authentic football jerseys.
           </h2>
           <p className="mt-4 text-white/80">
-            Join thousands of fans worldwide. Track orders, save favourites and check out faster.
+            Join thousands of fans across India. Track orders, save favourites and check out faster.
           </p>
           <ul className="mt-8 space-y-3 text-sm">
             {[
               { icon: ShieldCheck, t: "100% authentic, officially sourced" },
-              { icon: Truck, t: "Fast, tracked worldwide shipping" },
+              { icon: Truck, t: "Fast, tracked shipping across India" },
               { icon: Star, t: "Rated 4.9/5 by our community" },
             ].map((f) => (
               <li key={f.t} className="flex items-center gap-3">
