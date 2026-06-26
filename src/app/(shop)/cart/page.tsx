@@ -99,7 +99,7 @@ export default function CartPage() {
               <Row label="Subtotal" value={formatPrice(subtotal)} />
               <Row label="Shipping" value={shipping === 0 ? "—" : formatPrice(shipping)} />
               <p className="text-xs text-muted-foreground">
-                Flat ₹100 shipping across India · Express available at checkout.
+                Flat ₹100 shipping across India · Delivered in 5–6 business days.
               </p>
               <Separator className="my-2" />
               <div className="flex justify-between text-base font-bold">

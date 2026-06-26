@@ -15,6 +15,13 @@ export async function PUT(req: Request) {
       hero: body.hero ?? current.hero,
       heroTiles: body.heroTiles ?? current.heroTiles,
       limitedBanner: body.limitedBanner ?? current.limitedBanner,
+      collections: body.collections ?? current.collections,
+      featuredTeams: body.featuredTeams ?? current.featuredTeams,
+      customTeams: body.customTeams ?? current.customTeams,
+      teamOverrides: body.teamOverrides ?? current.teamOverrides,
+      removedTeamIds: body.removedTeamIds ?? current.removedTeamIds,
+      reviews: body.reviews ?? current.reviews,
+      instagramPosts: body.instagramPosts ?? current.instagramPosts,
     };
     saveCmsData(updated);
     return NextResponse.json({ ok: true });

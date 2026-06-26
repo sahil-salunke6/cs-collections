@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import * as api from "@/lib/api";
-import { products } from "@/data/products";
+import { getCmsProductBySlug } from "@/lib/cms";
+
+// Always read live stock/pricing (reflects admin edits and inventory after orders).
+export const dynamic = "force-dynamic";
 import { Container } from "@/components/common/Container";
 import { Section } from "@/components/common/Section";
 import { SectionHeader } from "@/components/common/SectionHeader";
@@ -12,17 +15,13 @@ import { ProductPurchase } from "@/components/product/ProductPurchase";
 import { ReviewsSection } from "@/components/product/ReviewsSection";
 import { ProductRailSection } from "@/components/product/ProductRailSection";
 
-export async function generateStaticParams() {
-  return products.map((p) => ({ slug: p.slug }));
-}
-
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const product = await api.getProductBySlug(slug);
+  const product = getCmsProductBySlug(slug);
   if (!product) return { title: "Product not found" };
   return {
     title: product.name,
@@ -36,7 +35,7 @@ export default async function ProductDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const product = await api.getProductBySlug(slug);
+  const product = getCmsProductBySlug(slug);
   if (!product) notFound();
 
   const related = await api.getRelatedProducts(product);
@@ -99,7 +98,7 @@ export default async function ProductDetailPage({
             <AccordionItem value="shipping">
               <AccordionTrigger>Shipping &amp; Payment</AccordionTrigger>
               <AccordionContent>
-                Flat ₹100 standard shipping across India (express available at checkout). Pay securely via UPI,
+                Flat ₹100 standard shipping across India, delivered in 5–6 business days. Pay securely via UPI,
                 credit/debit cards or net banking. Every jersey is 100% authentic and quality-checked before dispatch.
               </AccordionContent>
             </AccordionItem>

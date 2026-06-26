@@ -1,12 +1,12 @@
 [
-  { "id": "f1", "category": "Orders & Shipping", "question": "How long does delivery take?", "answer": "Standard delivery is 3–5 business days. Express options (1–2 days) are available at checkout. International orders typically arrive within 7–12 business days." },
-  { "id": "f2", "category": "Orders & Shipping", "question": "Do you ship internationally?", "answer": "Yes. We ship to over 90 countries. Duties and taxes are calculated at checkout where applicable." },
+  { "id": "f1", "category": "Orders & Shipping", "question": "How long does delivery take?", "answer": "Orders are delivered across India in 5–6 business days. We dispatch within 24 hours of your order being confirmed." },
+  { "id": "f2", "category": "Orders & Shipping", "question": "Do you ship internationally?", "answer": "No — we currently ship within India only. Orders are delivered to serviceable pin codes across the country." },
   { "id": "f3", "category": "Orders & Shipping", "question": "Can I track my order?", "answer": "Absolutely. Once your order ships you'll receive a tracking number by email, and you can follow progress under Account → Orders." },
   { "id": "f4", "category": "Sizing & Fit", "question": "How do CS Collections jerseys fit?", "answer": "Our authentic jerseys have an athletic fit. If you prefer a relaxed fit, we recommend sizing up. Each product page includes a detailed size guide." },
   { "id": "f5", "category": "Sizing & Fit", "question": "Where can I find the size guide?", "answer": "Open any product and click 'Size Guide' next to the size selector for full chest, length and regional conversion charts." },
-  { "id": "f6", "category": "Orders & Shipping", "question": "Do you charge for shipping?", "answer": "Yes — we charge a flat shipping fee starting at ₹100 per order across India. Express delivery is available at checkout for a higher rate." },
+  { "id": "f6", "category": "Orders & Shipping", "question": "Do you charge for shipping?", "answer": "Yes — a flat ₹100 shipping fee per order, anywhere in India. There are no extra or hidden charges." },
   { "id": "f7", "category": "Support", "question": "How can I reach you quickly?", "answer": "Message us on WhatsApp at +91 86579 73913 or +91 72190 60279, or DM us on Instagram @_cs_collections_. We usually reply within a few hours." },
   { "id": "f8", "category": "Authenticity", "question": "Are your jerseys authentic?", "answer": "Every jersey is 100% authentic and sourced through official channels. We never sell replicas or counterfeits." },
   { "id": "f9", "category": "Personalisation", "question": "Can I add a name and number?", "answer": "Yes — most current-season jerseys can be personalised with official player or custom name and number printing at checkout." },
-  { "id": "f10", "category": "Payments", "question": "Which payment methods do you accept?", "answer": "We accept all major cards, Apple Pay, Google Pay and PayPal. Payments are securely encrypted." }
+  { "id": "f10", "category": "Payments", "question": "Which payment methods do you accept?", "answer": "We accept UPI, all major credit/debit cards and net banking. Payments are securely encrypted." }
 ]

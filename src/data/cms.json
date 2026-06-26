@@ -19,8 +19,8 @@
         "label": "Authentic"
       },
       {
-        "value": "90+",
-        "label": "Countries shipped"
+        "value": "Pan-India",
+        "label": "Fast delivery"
       },
       {
         "value": "4.9★",
@@ -29,10 +29,44 @@
     ]
   },
   "heroTiles": [
-    { "image": null, "colors": ["#FCE000", "#009C3B", "#002776"], "view": "front" },
-    { "image": null, "colors": ["#FFFFFF", "#FEBE10", "#00529F"], "view": "back", "name": "Madrid", "number": 7 },
-    { "image": null, "colors": ["#A50044", "#004D98", "#FFED02"], "view": "front" },
-    { "image": null, "colors": ["#6CABDD", "#FFFFFF", "#1C2C5B"], "view": "front" }
+    {
+      "image": "/uploads/1782423007183-1327zm3j25cg.png",
+      "colors": [
+        "#FCE000",
+        "#009C3B",
+        "#002776"
+      ],
+      "view": "front"
+    },
+    {
+      "image": "/uploads/1782423027439-9tuoxrf0ij.png",
+      "colors": [
+        "#FFFFFF",
+        "#FEBE10",
+        "#00529F"
+      ],
+      "view": "back",
+      "name": "Madrid",
+      "number": 7
+    },
+    {
+      "image": "/uploads/1782423041093-zc7s4re094s.png",
+      "colors": [
+        "#A50044",
+        "#004D98",
+        "#FFED02"
+      ],
+      "view": "front"
+    },
+    {
+      "image": "/uploads/1782423045430-uedydlc6aim.png",
+      "colors": [
+        "#6CABDD",
+        "#FFFFFF",
+        "#1C2C5B"
+      ],
+      "view": "front"
+    }
   ],
   "limitedBanner": {
     "eyebrow": "Limited Edition",
@@ -41,6 +75,169 @@
     "ctaText": "Shop Limited Edition",
     "ctaHref": "/products?badge=limited"
   },
+  "collections": [
+    {
+      "slug": "national-teams",
+      "title": "National Teams",
+      "subtitle": "Represent your nation",
+      "href": "/national-teams"
+    },
+    {
+      "slug": "club-teams",
+      "title": "Club Teams",
+      "subtitle": "Club colours, worldwide",
+      "href": "/club-teams"
+    },
+    {
+      "slug": "retro",
+      "title": "Retro Jerseys",
+      "subtitle": "Heritage classics reissued",
+      "href": "/retro"
+    },
+    {
+      "slug": "new-arrivals",
+      "title": "New Arrivals",
+      "subtitle": "Freshly dropped",
+      "href": "/new-arrivals"
+    }
+  ],
+  "featuredTeams": {
+    "national": [
+      "portugal",
+      "argentina",
+      "france",
+      "brazil",
+      "england",
+      "japan"
+    ],
+    "club": [
+      "paris-saint-germain",
+      "real-madrid",
+      "bayern-munich",
+      "manchester-city",
+      "barcelona",
+      "liverpool"
+    ]
+  },
+  "customTeams": [
+    {
+      "id": "ct-1782337136397",
+      "slug": "japan",
+      "name": "Japan",
+      "type": "national",
+      "crest": "/uploads/1782414717307-iuu3hh0qswd.png",
+      "primaryColor": "#1c3563",
+      "productCount": 0,
+      "featured": false
+    }
+  ],
+  "teamOverrides": {
+    "br": {
+      "crest": "/uploads/1782415511414-adkhviwlfp.png"
+    },
+    "ar": {
+      "crest": "/uploads/1782415515059-7d5fhi58c6p.png"
+    },
+    "fr": {
+      "crest": "/uploads/1782415523945-6ute8m1h8k.png"
+    },
+    "en": {
+      "crest": "/uploads/1782415529657-imsitdurp7p.png"
+    },
+    "pt": {
+      "crest": "/uploads/1782415536129-5k3tezaektn.png"
+    },
+    "psg": {
+      "crest": "/uploads/1782418190724-w7p5kpagecf.png"
+    },
+    "rma": {
+      "crest": "/uploads/1782423114700-uvthg2eyqpi.png"
+    },
+    "fcb-de": {
+      "crest": "/uploads/1782470487994-dxjb2p4g10j.png"
+    }
+  },
+  "removedTeamIds": [],
+  "reviews": [
+    {
+      "id": "r1",
+      "author": "James W.",
+      "location": "London, UK",
+      "rating": 5,
+      "text": "The quality is unreal — feels exactly like the on-pitch version. Shipping was lightning fast."
+    },
+    {
+      "id": "r2",
+      "author": "Camila S.",
+      "location": "São Paulo, BR",
+      "rating": 5,
+      "text": "My Brazil retro shirt is stunning. The detailing and fabric are top tier. Will buy again."
+    },
+    {
+      "id": "r3",
+      "author": "Tariq A.",
+      "location": "Dubai, UAE",
+      "rating": 5,
+      "text": "Best jersey store I've used. Authentic, beautifully packaged, and the fit guide was spot on."
+    },
+    {
+      "id": "r4",
+      "author": "Noah L.",
+      "location": "Berlin, DE",
+      "rating": 4,
+      "text": "Great selection of clubs and nations. The limited editions sell out fast — grab them quick!"
+    }
+  ],
+  "instagramPosts": [
+    {
+      "id": "ig1",
+      "image": null,
+      "href": "https://www.instagram.com/reel/DZnXax1tgP8/?igsh=MWhla2dxZ3BoZDhxdg==",
+      "likes": 0
+    },
+    {
+      "id": "ig2",
+      "image": null,
+      "href": "https://instagram.com/_cs_collections_",
+      "likes": 557
+    },
+    {
+      "id": "ig3",
+      "image": null,
+      "href": "https://instagram.com/_cs_collections_",
+      "likes": 694
+    },
+    {
+      "id": "ig4",
+      "image": null,
+      "href": "https://instagram.com/_cs_collections_",
+      "likes": 831
+    },
+    {
+      "id": "ig5",
+      "image": null,
+      "href": "https://instagram.com/_cs_collections_",
+      "likes": 968
+    },
+    {
+      "id": "ig6",
+      "image": null,
+      "href": "https://instagram.com/_cs_collections_",
+      "likes": 1105
+    },
+    {
+      "id": "ig7",
+      "image": null,
+      "href": "https://instagram.com/_cs_collections_",
+      "likes": 1242
+    },
+    {
+      "id": "ig8",
+      "image": null,
+      "href": "https://instagram.com/_cs_collections_",
+      "likes": 1379
+    }
+  ],
   "productOverrides": {
     "p001": {
       "id": "p001",
@@ -109,7 +306,139 @@
       "isFeatured": true,
       "isLimited": false,
       "createdAt": "2026-06-14T18:30:00.000Z"
+    },
+    "p002": {
+      "id": "p002",
+      "slug": "brazil-2024-25-away",
+      "name": "Brazil 2024/25 Away Jersey",
+      "team": "Brazil",
+      "teamId": "br",
+      "type": "national",
+      "kit": "away",
+      "season": "2024/25",
+      "brand": "Nike",
+      "category": "Mens",
+      "confederation": "CONMEBOL",
+      "price": 1100,
+      "currency": "INR",
+      "images": [
+        "front",
+        "back",
+        "detail"
+      ],
+      "sizes": [
+        {
+          "size": "S",
+          "stock": 16
+        },
+        {
+          "size": "M",
+          "stock": 31
+        },
+        {
+          "size": "L",
+          "stock": 16
+        },
+        {
+          "size": "XL",
+          "stock": 32
+        },
+        {
+          "size": "XXL",
+          "stock": 0
+        }
+      ],
+      "colors": [
+        "#009C3B",
+        "#FCE000",
+        "#002776"
+      ],
+      "rating": 4.2,
+      "reviewCount": 66,
+      "tags": [
+        "Brazil",
+        "Nike",
+        "Away",
+        "2024/25",
+        "national"
+      ],
+      "badges": [],
+      "shortDescription": "Nike Stadium Away shirt — 2024/25 season.",
+      "description": "The official Brazil 2024/25 away jersey by Nike. Engineered with sweat-wicking performance fabric and a tailored athletic fit, finished with the club crest, manufacturer mark and authentic detailing. Built for matchday and everyday wear.",
+      "teamInfo": "Brazil competes in CONMEBOL. Recognised worldwide for an iconic identity, the club/nation colours are a global symbol of the game.",
+      "seasonInfo": "Part of the 2024/25 on-pitch collection, worn by the first team in domestic and international competition.",
+      "isFeatured": false,
+      "isLimited": false,
+      "createdAt": "2026-06-05T18:30:00.000Z"
     }
   },
-  "newProducts": []
+  "newProducts": [
+    {
+      "id": "new-1782334351115",
+      "slug": "",
+      "name": "Japan 2026 Home Jersey",
+      "team": "Japan",
+      "teamId": "jpn",
+      "type": "national",
+      "kit": "home",
+      "season": "2026",
+      "brand": "Adidas",
+      "category": "Mens",
+      "confederation": "AFC",
+      "price": 1100,
+      "currency": "INR",
+      "images": [
+        "front",
+        "back",
+        "detail"
+      ],
+      "video": "showcase",
+      "sizes": [
+        {
+          "size": "S",
+          "stock": 10
+        },
+        {
+          "size": "M",
+          "stock": 24
+        },
+        {
+          "size": "L",
+          "stock": 24
+        },
+        {
+          "size": "XL",
+          "stock": 20
+        },
+        {
+          "size": "XXL",
+          "stock": 6
+        }
+      ],
+      "colors": [
+        "#000555",
+        "#eaf5fb",
+        "#ce0303"
+      ],
+      "rating": 4.8,
+      "reviewCount": 373,
+      "tags": [
+        "Brazil",
+        "Nike",
+        "Home",
+        "2024/25",
+        "national"
+      ],
+      "badges": [
+        "bestseller"
+      ],
+      "shortDescription": "Adidas Stadium Home shirt — 2026 World Cup season.",
+      "description": "The official Japan 2026 Home Kit by Adidas. Engineered with sweat-wicking Climacool technology for a cool, dry performance, finished with the national team crest, manufacturer mark, and an \"Away-From-Home/Beyond the Horizon\" inspired design. Built for matchday and everyday wear.",
+      "teamInfo": "Japan competes in AFC (Asian Football Confederation). Recognized worldwide for a distinct identity, the nation's Samurai Blue colours are a global symbol of the game.",
+      "seasonInfo": "Part of the 2026/27 on-pitch collection, worn by the first team in the AFC Asian Qualifiers and the FIFA World Cup 2026.",
+      "isFeatured": false,
+      "isLimited": false,
+      "createdAt": "2026-06-24T20:52:31.115Z"
+    }
+  ]
 }

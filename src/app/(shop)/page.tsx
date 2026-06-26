@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import * as api from "@/lib/api";
-import { getCmsData } from "@/lib/cms";
+import { getCmsData, getCmsTeamCatalog } from "@/lib/cms";
+import teamsData from "@/data/teams.json";
+import type { Team } from "@/types";
 import { Section } from "@/components/common/Section";
 import { Container } from "@/components/common/Container";
 import { SectionHeader } from "@/components/common/SectionHeader";
@@ -16,16 +18,15 @@ import { Newsletter } from "@/components/common/Newsletter";
 
 export default async function HomePage() {
   const cms = getCmsData();
-  const [nationalTeams, clubTeams, newArrivals, trending, limited, retro, collections, instagram] =
+  const teamPool = getCmsTeamCatalog(teamsData as Team[]);
+  const [nationalTeams, clubTeams, newArrivals, trending, limited, retro] =
     await Promise.all([
-      api.getFeaturedTeams("national"),
-      api.getFeaturedTeams("club"),
+      api.getTeamsBySlugs(cms.featuredTeams.national, teamPool),
+      api.getTeamsBySlugs(cms.featuredTeams.club, teamPool),
       api.getNewArrivals(10),
       api.getTrending(10),
       api.getLimitedEdition(6),
       api.getRetro(10),
-      api.getCollections(),
-      api.getInstagram(),
     ]);
 
   return (
@@ -39,7 +40,7 @@ export default async function HomePage() {
           description="From international glory to club legends and timeless retro classics."
         />
         <div className="mt-8">
-          <CollectionTiles collections={collections} />
+          <CollectionTiles collections={cms.collections} />
         </div>
       </Section>
 
@@ -95,14 +96,14 @@ export default async function HomePage() {
       <Section>
         <SectionHeader align="center" eyebrow="Loved worldwide" title="What Our Customers Say" />
         <div className="mt-10">
-          <ReviewsCarousel />
+          <ReviewsCarousel reviews={cms.reviews} />
         </div>
       </Section>
 
       <Section muted>
         <SectionHeader eyebrow="@_cs_collections_" title="Follow the Movement" href="https://instagram.com/_cs_collections_" hrefLabel="Follow us" />
         <div className="mt-8">
-          <InstagramGallery posts={instagram} />
+          <InstagramGallery posts={cms.instagramPosts} />
         </div>
       </Section>
 

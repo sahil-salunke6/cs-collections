@@ -1,8 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Heart, ShoppingBag } from "lucide-react";
+import { Heart, ShoppingBag, X } from "lucide-react";
 import type { Product } from "@/types";
 import { cn } from "@/lib/utils/cn";
 import { discountPct } from "@/lib/utils/format";
@@ -17,7 +18,8 @@ export function ProductCard({ product, className }: { product: Product; classNam
   const { isWishlisted, toggle } = useWishlist();
   const { add } = useCart();
   const wished = isWishlisted(product.id);
-  const firstSize = product.sizes.find((s) => s.stock > 0)?.size;
+  const hasStock = product.sizes.some((s) => s.stock > 0);
+  const [picking, setPicking] = useState(false);
   const off = discountPct(product);
 
   return (
@@ -54,16 +56,59 @@ export function ProductCard({ product, className }: { product: Product; classNam
           </span>
         )}
 
-        {/* Quick Add — slides up from bottom on hover, no conflict with heart */}
-        {firstSize && (
+        {/* Quick Add — slides up from bottom on hover; tap reveals a size picker */}
+        {hasStock && !picking && (
           <button
             type="button"
-            onClick={() => add(product, firstSize)}
+            onClick={() => setPicking(true)}
             className="absolute inset-x-3 bottom-3 flex translate-y-2 items-center justify-center gap-2 rounded-full bg-[#111111] py-2.5 text-sm font-semibold text-white opacity-0 shadow-lg transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 dark:bg-white dark:text-[#111111]"
           >
             <ShoppingBag className="size-4" />
             Quick add
           </button>
+        )}
+
+        {/* Size picker — choose a size, then it's added to the cart */}
+        {hasStock && picking && (
+          <div className="absolute inset-x-3 bottom-3 rounded-xl bg-[#111111]/95 p-2.5 shadow-lg backdrop-blur dark:bg-white/95">
+            <div className="mb-2 flex items-center justify-between px-0.5">
+              <span className="text-[11px] font-semibold uppercase tracking-wide text-white/80 dark:text-[#111111]/80">
+                Select size
+              </span>
+              <button
+                type="button"
+                onClick={() => setPicking(false)}
+                aria-label="Close size picker"
+                className="text-white/70 hover:text-white dark:text-[#111111]/70 dark:hover:text-[#111111]"
+              >
+                <X className="size-3.5" />
+              </button>
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              {product.sizes.map((s) => {
+                const out = s.stock === 0;
+                return (
+                  <button
+                    key={s.size}
+                    type="button"
+                    disabled={out}
+                    onClick={() => {
+                      add(product, s.size);
+                      setPicking(false);
+                    }}
+                    className={cn(
+                      "min-w-9 rounded-md px-2 py-1.5 text-xs font-semibold transition-colors",
+                      out
+                        ? "cursor-not-allowed text-white/30 line-through dark:text-[#111111]/30"
+                        : "bg-white/10 text-white hover:bg-white hover:text-[#111111] dark:bg-[#111111]/10 dark:text-[#111111] dark:hover:bg-[#111111] dark:hover:text-white",
+                    )}
+                  >
+                    {s.size}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         )}
       </div>
 

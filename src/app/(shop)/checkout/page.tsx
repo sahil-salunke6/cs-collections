@@ -3,7 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Check, CreditCard, Truck, MapPin, ShieldCheck, PartyPopper } from "lucide-react";
+import { toast } from "sonner";
+import { Check, CreditCard, Truck, MapPin, ShieldCheck, PartyPopper, Loader2 } from "lucide-react";
 import { PaymentMethods, type PayMethod } from "@/components/checkout/PaymentMethods";
 import { Container } from "@/components/common/Container";
 import { Button } from "@/components/ui/button";
@@ -27,8 +28,7 @@ const STEPS = [
 ] as const;
 
 const DELIVERY = [
-  { id: "standard", label: "Standard", desc: "3–5 business days", price: 100 },
-  { id: "express", label: "Express", desc: "1–2 business days", price: 199 },
+  { id: "standard", label: "Standard Shipping", desc: "Delivered across India in 5–6 business days", price: 100 },
 ];
 
 export default function CheckoutPage() {
@@ -39,6 +39,7 @@ export default function CheckoutPage() {
   const [delivery, setDelivery] = useState("standard");
   const [payMethod, setPayMethod] = useState<PayMethod>("card");
   const [placed, setPlaced] = useState<string | null>(null);
+  const [placing, setPlacing] = useState(false);
 
   const deliveryFee = DELIVERY.find((d) => d.id === delivery)?.price ?? 0;
   const grandTotal = subtotal + deliveryFee;
@@ -90,10 +91,25 @@ export default function CheckoutPage() {
     );
   }
 
-  function placeOrder() {
-    const num = `CS-${100400 + Math.floor(Math.random() * 600)}`;
-    dispatch(clearCart());
-    setPlaced(num);
+  async function placeOrder() {
+    setPlacing(true);
+    try {
+      const res = await fetch("/api/cms/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          items: items.map((i) => ({ productId: i.productId, size: i.size, quantity: i.quantity })),
+        }),
+      });
+      const json = await res.json();
+      if (!res.ok || !json.ok) throw new Error("Checkout failed");
+      dispatch(clearCart());
+      setPlaced(json.orderNumber);
+    } catch {
+      toast.error("Couldn't place your order", { description: "Please try again in a moment." });
+    } finally {
+      setPlacing(false);
+    }
   }
 
   return (
@@ -200,8 +216,9 @@ export default function CheckoutPage() {
             {step < STEPS.length - 1 ? (
               <Button onClick={() => setStep((s) => s + 1)}>Continue</Button>
             ) : (
-              <Button variant="accent" size="lg" onClick={placeOrder}>
-                <ShieldCheck className="size-4" /> Place Order
+              <Button variant="accent" size="lg" onClick={placeOrder} disabled={placing}>
+                {placing ? <Loader2 className="size-4 animate-spin" /> : <ShieldCheck className="size-4" />}
+                {placing ? "Placing order…" : "Place Order"}
               </Button>
             )}
           </div>
